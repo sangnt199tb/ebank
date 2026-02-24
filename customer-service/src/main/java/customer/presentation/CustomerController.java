@@ -12,6 +12,6 @@ public class CustomerController {
     @RequestMapping(method = RequestMethod.GET, value = "/test-customer")
     @ResponseStatus(HttpStatus.OK)
     public String getInfoCompany(){
-        return "OK rồi luôn";
+        return "OK rồi luôn đó";
     }
 }
