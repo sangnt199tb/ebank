@@ -20,6 +20,10 @@ spring:
           uri: lb://file-service
           predicates:
               - Path=/file-service/**
+        - id: bankadmin-service
+          uri: lb://bankadmin-service
+          predicates:
+            - Path=/bankadmin-service/**
 
 eureka:
   client:

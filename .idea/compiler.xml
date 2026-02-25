@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
         <module name="onboard-service" />
+        <module name="bankadmin-service" />
         <module name="customer-service" />
         <module name="file-service" />
         <module name="discovery-service" />
