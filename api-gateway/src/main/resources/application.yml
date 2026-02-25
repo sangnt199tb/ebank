@@ -12,6 +12,10 @@ spring:
           uri: lb://customer-service
           predicates:
             - Path=/customer-service/**
+        - id: onboard-service
+          uri: lb://onboard-service
+          predicates:
+              - Path=/onboard-service/**
 
 eureka:
   client:

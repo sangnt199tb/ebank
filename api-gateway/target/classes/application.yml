@@ -1,7 +1,5 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api-gateway
 
 spring:
   application:
@@ -14,6 +12,10 @@ spring:
           uri: lb://customer-service
           predicates:
             - Path=/customer-service/**
+        - id: onboard-service
+          uri: lb://onboard-service
+          predicates:
+              - Path=/onboard-service/**
 
 eureka:
   client:
