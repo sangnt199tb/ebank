@@ -16,6 +16,10 @@ spring:
           uri: lb://onboard-service
           predicates:
               - Path=/onboard-service/**
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+              - Path=/file-service/**
 
 eureka:
   client:

@@ -65,6 +65,7 @@
         <module>discovery-service</module>
         <module>api-gateway</module>
         <module>onboard-service</module>
+        <module>file-service</module>
     </modules>
 
 </project>
