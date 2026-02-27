@@ -1,5 +1,6 @@
 package onboard.presentation.service.impl;
 
+import onboard.client.FileClient;
 import onboard.persistence.domain.SdkConfigEntity;
 import onboard.persistence.repository.SdkConfigRepo;
 import onboard.presentation.model.ConfigSdkModel;
@@ -16,32 +17,41 @@ import java.util.stream.Collectors;
 public class ConfigServiceImpl implements ConfigService {
 
     private final SdkConfigRepo sdkConfigRepo;
+    private final FileClient fileClient;
 
     @Autowired
-    public ConfigServiceImpl(SdkConfigRepo sdkConfigRepo) {
+    public ConfigServiceImpl(SdkConfigRepo sdkConfigRepo, FileClient fileClient) {
         this.sdkConfigRepo = sdkConfigRepo;
+        this.fileClient = fileClient;
     }
 
     @Override
     public List<ConfigSdkModel> getAllConfigSdk() {
-        List<SdkConfigEntity> list = sdkConfigRepo.findAll();
-        System.out.println("ConfigServiceImpl list: " + list.toString());
-        System.out.println("ConfigServiceImpl list size: " + list.size());
-        return list.stream().map(
-                e -> {
-                 ConfigSdkModel configSdkModel = new ConfigSdkModel();
-                 configSdkModel.setId(e.getId());
-                 configSdkModel.setPartnerName(e.getPartnerName());
-                 configSdkModel.setDescription(e.getDescription());
-                 configSdkModel.setStatusNfc(e.getPriority());
-                 configSdkModel.setPriority(e.getPriority());
-                 configSdkModel.setCreateDate(e.getCreateDate());
-                 configSdkModel.setUpdateDate(e.getUpdateDate());
-                 configSdkModel.setRequestLimit(e.getRequestLimit());
-                 configSdkModel.setRequestQuantity(e.getRequestQuantity());
-                 return configSdkModel;
-                }
-        ).collect(Collectors.toList());
+       try {
+           List<SdkConfigEntity> list = sdkConfigRepo.findAll();
+           String callFile = fileClient.callFile();
+           System.out.println("callFile kq: " + callFile);
+           System.out.println("ConfigServiceImpl list: " + list.toString());
+           System.out.println("ConfigServiceImpl list size: " + list.size());
+           return list.stream().map(
+                   e -> {
+                       ConfigSdkModel configSdkModel = new ConfigSdkModel();
+                       configSdkModel.setId(e.getId());
+                       configSdkModel.setPartnerName(e.getPartnerName());
+                       configSdkModel.setDescription(e.getDescription());
+                       configSdkModel.setStatusNfc(e.getPriority());
+                       configSdkModel.setPriority(e.getPriority());
+                       configSdkModel.setCreateDate(e.getCreateDate());
+                       configSdkModel.setUpdateDate(e.getUpdateDate());
+                       configSdkModel.setRequestLimit(e.getRequestLimit());
+                       configSdkModel.setRequestQuantity(e.getRequestQuantity());
+                       return configSdkModel;
+                   }
+           ).collect(Collectors.toList());
+       } catch (Exception e){
+           System.out.println("ConfigServiceImpl getAllConfigSdk with error detail:"  + e.toString());
+           throw e;
+       }
     }
 
     @Override
