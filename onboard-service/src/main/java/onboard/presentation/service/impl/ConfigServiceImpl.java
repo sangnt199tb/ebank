@@ -1,5 +1,6 @@
 package onboard.presentation.service.impl;
 
+import onboard.client.CustomerClient;
 import onboard.client.FileClient;
 import onboard.persistence.domain.SdkConfigEntity;
 import onboard.persistence.repository.SdkConfigRepo;
@@ -18,19 +19,19 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final SdkConfigRepo sdkConfigRepo;
     private final FileClient fileClient;
+    private final CustomerClient customerClient;
 
     @Autowired
-    public ConfigServiceImpl(SdkConfigRepo sdkConfigRepo, FileClient fileClient) {
+    public ConfigServiceImpl(SdkConfigRepo sdkConfigRepo, FileClient fileClient, CustomerClient customerClient) {
         this.sdkConfigRepo = sdkConfigRepo;
         this.fileClient = fileClient;
+        this.customerClient = customerClient;
     }
 
     @Override
     public List<ConfigSdkModel> getAllConfigSdk() {
        try {
            List<SdkConfigEntity> list = sdkConfigRepo.findAll();
-           String callFile = fileClient.callFile();
-           System.out.println("callFile kq: " + callFile);
            System.out.println("ConfigServiceImpl list: " + list.toString());
            System.out.println("ConfigServiceImpl list size: " + list.size());
            return list.stream().map(
@@ -67,5 +68,14 @@ public class ConfigServiceImpl implements ConfigService {
         configSdkModel.setPartnerName(configEntity.getPartnerName());
         return configSdkModel;
 
+    }
+
+    @Override
+    public String getOnboardCallFile() {
+        String callFile = fileClient.callFileClient();
+        System.out.println("getOnboardCallFile callFile kq: " + callFile);
+        String kqCallCustomer = customerClient.callCustomerClient();
+        System.out.println("getOnboardCallFile kqCallCustomer: " + kqCallCustomer);
+        return callFile + "and" + kqCallCustomer;
     }
 }

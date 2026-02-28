@@ -35,4 +35,10 @@ public class OnboardController {
     public ConfigSdkModel getConfigById(){
         return configService.getAllConfigSdkById();
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/call-file-from-onboard")
+    @ResponseStatus(HttpStatus.OK)
+    public String getOnboardCallFile(){
+        return configService.getOnboardCallFile();
+    }
 }

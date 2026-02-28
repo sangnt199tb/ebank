@@ -8,4 +8,6 @@ public interface ConfigService {
     List<ConfigSdkModel> getAllConfigSdk();
 
     ConfigSdkModel getAllConfigSdkById();
+
+    String getOnboardCallFile();
 }
