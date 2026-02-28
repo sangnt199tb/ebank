@@ -67,6 +67,7 @@
         <module>onboard-service</module>
         <module>file-service</module>
         <module>bankadmin-service</module>
+        <module>fundtransfer-service</module>
     </modules>
 
 </project>

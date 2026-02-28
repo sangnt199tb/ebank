@@ -23,7 +23,11 @@ spring:
         - id: bankadmin-service
           uri: lb://bankadmin-service
           predicates:
-            - Path=/bankadmin-service/**
+              - Path=/bankadmin-service/**
+        - id: fundtransfer-service
+          uri: lb://fundtransfer-service
+          predicates:
+            - Path=/fundtransfer-service/**
 
 eureka:
   client:

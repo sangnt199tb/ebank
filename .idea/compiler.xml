@@ -7,10 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
         <module name="onboard-service" />
-        <module name="bankadmin-service" />
         <module name="customer-service" />
+        <module name="api-gateway" />
+        <module name="fundtransfer-service" />
+        <module name="bankadmin-service" />
         <module name="file-service" />
         <module name="discovery-service" />
       </profile>
