@@ -76,6 +76,6 @@ public class ConfigServiceImpl implements ConfigService {
         System.out.println("getOnboardCallFile callFile kq: " + callFile);
         String kqCallCustomer = customerClient.callCustomerClient();
         System.out.println("getOnboardCallFile kqCallCustomer: " + kqCallCustomer);
-        return callFile + "and" + kqCallCustomer;
+        return callFile + " and " + kqCallCustomer;
     }
 }
