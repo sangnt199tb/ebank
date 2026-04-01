@@ -1,5 +1,6 @@
 package onboard.presentation.service.impl;
 
+import customer.presentation.model.CustomerModel;
 import onboard.client.CustomerClient;
 import onboard.client.FileClient;
 import onboard.persistence.domain.SdkConfigEntity;
@@ -72,10 +73,12 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public String getOnboardCallFile() {
-        String callFile = fileClient.callFileClient();
-        System.out.println("getOnboardCallFile callFile kq: " + callFile);
+//        String callFile = fileClient.callFileClient();
+//        System.out.println("getOnboardCallFile callFile kq: " + callFile);
         String kqCallCustomer = customerClient.callCustomerClient();
         System.out.println("getOnboardCallFile kqCallCustomer: " + kqCallCustomer);
-        return callFile + " and " + kqCallCustomer;
+        CustomerModel customerModel = customerClient.getCustomerById("C001");
+        System.out.println("getOnboardCallFile customerModel: " + customerModel.toString());
+        return  " and " + kqCallCustomer;
     }
 }

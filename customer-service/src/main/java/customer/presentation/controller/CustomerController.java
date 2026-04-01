@@ -1,4 +1,4 @@
-package customer.presentation;
+package customer.presentation.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
