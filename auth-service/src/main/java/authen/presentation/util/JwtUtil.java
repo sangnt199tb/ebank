@@ -1,0 +1,41 @@
+package authen.presentation.util;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import org.bouncycastle.jcajce.BCFKSLoadStoreParameter;
+
+import java.util.Date;
+import java.util.Map;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class JwtUtil {
+
+    private final String SECRET = "secret-key-secret-key-secret-key"; // >= 32 ký tự
+
+    private final long EXPIRATION = 86400000;
+
+    public String generateToken(String username, String role) {
+
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+}

@@ -69,6 +69,7 @@
         <module>bankadmin-service</module>
         <module>fundtransfer-service</module>
         <module>common-service</module>
+        <module>auth-service</module>
     </modules>
 
 </project>
