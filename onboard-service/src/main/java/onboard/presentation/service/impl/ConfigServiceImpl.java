@@ -80,8 +80,8 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public String getOnboardCallFile() {
-//        String callFile = fileClient.callFileClient();
-//        System.out.println("getOnboardCallFile callFile kq: " + callFile);
+        String callFile = fileClient.callFileClient();
+        System.out.println("getOnboardCallFile callFile kq: " + callFile);
         try {
             logger.info("Start ConfigServiceImpl getOnboardCallFile");
             String kqCallCustomer = customerClient.callCustomerClient();

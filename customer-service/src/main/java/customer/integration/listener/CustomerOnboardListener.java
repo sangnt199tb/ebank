@@ -4,6 +4,8 @@ import customer.persistence.domain.CustomerEntity;
 import customer.persistence.repository.CustomerRepository;
 import customer.presentation.model.CustomerModel;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/customer/internal")
 public class CustomerOnboardListener {
     private final CustomerRepository customerRepository;
+    private static Logger logger = LoggerFactory.getLogger(CustomerOnboardListener.class);
 
     ModelMapper modelMapper = new ModelMapper();
 
@@ -26,7 +29,7 @@ public class CustomerOnboardListener {
 
     @GetMapping("/customers/{customerId}")
     public CustomerModel getCustomerById(@PathVariable("customerId") String customerId) {
-
+        logger.info("Start CustomerOnboardListener getCustomerById with customerId: {}", customerId);
         CustomerEntity entity = customerRepository.findByCustomerId(customerId);
 
         if (entity == null) {
