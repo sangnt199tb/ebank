@@ -2,6 +2,8 @@ package onboard.presentation.controller;
 
 import onboard.presentation.model.ConfigSdkModel;
 import onboard.presentation.service.ConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/onboard")
 public class OnboardController {
+
+    private static Logger logger = LoggerFactory.getLogger(OnboardController.class);
 
     @Autowired
     private ConfigService configService;

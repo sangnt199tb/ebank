@@ -1,4 +1,4 @@
-package onboard.client;
+package onboard.presentation.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

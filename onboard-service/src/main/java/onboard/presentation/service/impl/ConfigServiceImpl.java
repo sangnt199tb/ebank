@@ -1,13 +1,17 @@
 package onboard.presentation.service.impl;
 
 import customer.presentation.model.CustomerModel;
-import onboard.client.CustomerClient;
-import onboard.client.FileClient;
+import onboard.presentation.client.CustomerClient;
+import onboard.presentation.client.FileClient;
 import onboard.persistence.domain.SdkConfigEntity;
 import onboard.persistence.repository.SdkConfigRepo;
+import onboard.presentation.exception.ErrorCode;
+import onboard.presentation.exception.OnboardingException;
 import onboard.presentation.model.ConfigSdkModel;
 import onboard.presentation.service.ConfigService;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
+
+    private static Logger logger = LoggerFactory.getLogger(ConfigServiceImpl.class);
+
 
     private final SdkConfigRepo sdkConfigRepo;
     private final FileClient fileClient;
@@ -75,10 +82,17 @@ public class ConfigServiceImpl implements ConfigService {
     public String getOnboardCallFile() {
 //        String callFile = fileClient.callFileClient();
 //        System.out.println("getOnboardCallFile callFile kq: " + callFile);
-        String kqCallCustomer = customerClient.callCustomerClient();
-        System.out.println("getOnboardCallFile kqCallCustomer: " + kqCallCustomer);
-        CustomerModel customerModel = customerClient.getCustomerById("C001");
-        System.out.println("getOnboardCallFile customerModel: " + customerModel.toString());
-        return  " and " + kqCallCustomer;
+        try {
+            logger.info("Start ConfigServiceImpl getOnboardCallFile");
+            String kqCallCustomer = customerClient.callCustomerClient();
+            System.out.println("getOnboardCallFile kqCallCustomer: " + kqCallCustomer);
+            CustomerModel customerModel = customerClient.getCustomerById("C001");
+            System.out.println("getOnboardCallFile customerModel: " + customerModel.toString());
+            logger.info("getOnboardCallFile kqCallCustomer: {}" , customerModel.toString());
+            return  " and " + kqCallCustomer;
+        } catch (Exception e){
+            logger.error("ConfigServiceImpl getOnboardCallFile with error detail: {}", e);
+            throw new OnboardingException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }
