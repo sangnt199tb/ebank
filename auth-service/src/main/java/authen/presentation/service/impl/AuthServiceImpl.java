@@ -35,6 +35,6 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Wrong password");
         }
 
-        return jwtUtil.generateToken(username, "");
+        return jwtUtil.generateToken(username, "KH", "123456788");
     }
 }
