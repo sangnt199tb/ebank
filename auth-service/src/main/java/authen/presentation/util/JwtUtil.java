@@ -9,10 +9,12 @@ import java.util.Date;
 import java.util.Map;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JwtUtil {
 
-    private final String SECRET = "secret-key-secret-key-secret-key"; // >= 32 ký tự
+    private final String SECRET = "K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP"; // >= 32 ký tự
 
     private final long EXPIRATION = 86400000;
 

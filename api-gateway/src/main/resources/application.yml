@@ -28,6 +28,10 @@ spring:
           uri: lb://fundtransfer-service
           predicates:
             - Path=/fundtransfer-service/**
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth-service/**
 
 eureka:
   client:

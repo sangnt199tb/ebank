@@ -25,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     public String login(String username, String password) {
 
         UserDTO user = userClient.getUserByUsername(username);
+        System.out.println("AuthServiceImpl user login: " + user);
 
         if (user == null) {
             throw new RuntimeException("User not found");

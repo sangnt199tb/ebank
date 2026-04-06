@@ -1,5 +1,6 @@
 package customer.integration.listener;
 
+import authen.presentation.dto.UserDTO;
 import customer.persistence.domain.CustomerEntity;
 import customer.persistence.repository.CustomerRepository;
 import customer.presentation.model.CustomerModel;
@@ -37,5 +38,13 @@ public class CustomerOnboardListener {
         }
 
         return modelMapper.map(entity, CustomerModel.class);
+    }
+
+    @GetMapping("/customers/users/{username}")
+    public UserDTO getUserByUsername(@PathVariable("username") String username){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername("sanglangthang");
+        userDTO.setPassword("$2a$10$AYjj41H0H0R1Vh/7gBp19u2xPOiLp.I4v8ql2Bi4kMuYF1mgMwOxe");        userDTO.setRole("KH");
+        return userDTO;
     }
 }
