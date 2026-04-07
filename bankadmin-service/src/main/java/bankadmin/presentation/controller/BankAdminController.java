@@ -1,4 +1,4 @@
-package bankadmin.presentation;
+package bankadmin.presentation.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
