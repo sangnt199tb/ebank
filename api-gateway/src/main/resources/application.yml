@@ -40,3 +40,7 @@ eureka:
 
 jwt:
   secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
+
+api:
+  gateway:
+    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka

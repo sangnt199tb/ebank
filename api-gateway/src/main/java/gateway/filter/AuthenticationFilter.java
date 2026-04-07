@@ -2,6 +2,9 @@ package gateway.filter;
 
 import gateway.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -15,18 +18,12 @@ import java.util.List;
 
 @Component
 public class AuthenticationFilter implements GlobalFilter, Ordered {
+    private static Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     private final JwtUtil jwtUtil;
 
-    // ========================================================
-    // 1. DANH SÁCH TRẮNG (WHITE-LIST)
-    // Những đường dẫn chứa các từ khóa này sẽ KHÔNG cần Token
-    // ========================================================
-    private static final List<String> OPEN_ENDPOINTS = List.of(
-            "/auth-service/auth/login",
-            "/onboard-service/",
-            "/eureka"
-    );
+    @Value("${api.gateway.open-endpoints}")
+    private List<String> openEndpoints;
 
     public AuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -37,29 +34,29 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        System.out.println("[Gateway] Đang kiểm duyệt Request: " + path);
+        logger.info("AuthenticationFilter filter with path: {}", path);
 
-        // 2. KIỂM TRA ĐỊNH TUYẾN MỞ CỬA
-        boolean isPublicEndpoint = OPEN_ENDPOINTS.stream().anyMatch(path::contains);
+        // check api public
+        boolean isPublicEndpoint = openEndpoints.stream().anyMatch(path::contains);
+        logger.info("AuthenticationFilter filter isPublicEndpoint: {} and path: {}", isPublicEndpoint, path);
 
         if (isPublicEndpoint) {
-            System.out.println("[Gateway] => API Public (Onboard/Login), cho qua!");
             return chain.filter(exchange);
         }
 
-        // 3. KIỂM TRA HEADER AUTHORIZATION
+        // CHECK HEADER AUTHORIZATION
         if (!request.getHeaders().containsKey("Authorization")) {
-            System.out.println("[Gateway] => Lỗi: Thiếu Header Authorization");
+            logger.error("AuthenticationFilter filter containsKey Authorization with path: {}", path);
             return this.onError(exchange, "Missing Authorization header", HttpStatus.UNAUTHORIZED);
         }
 
         String authHeader = request.getHeaders().getOrEmpty("Authorization").get(0);
         if (!authHeader.startsWith("Bearer ")) {
-            System.out.println("[Gateway] => Lỗi: Token không có chữ Bearer");
+            logger.error("AuthenticationFilter filter bearer error with path: {}", path);
             return this.onError(exchange, "Invalid Authorization header format", HttpStatus.UNAUTHORIZED);
         }
 
-        // 4. LẤY VÀ GIẢI MÃ TOKEN
+        // token
         String token = authHeader.substring(7);
 
         try {
@@ -67,17 +64,17 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             String cif = claims.get("cif", String.class);
             String role = claims.get("role", String.class);
 
-            // 5. GẮN THÔNG TIN VÀO HEADER CHO REQUEST NỘI BỘ
+            // 5. set info header
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header("X-User-CIF", cif != null ? cif : "")
                     .header("X-User-Role", role != null ? role : "")
                     .build();
 
-            System.out.println("[Gateway] => Xác thực thành công CIF: " + cif + ". Đang chuyển tiếp xuống Service...");
+            logger.info("AuthenticationFilter filter success with path: {}", path);
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
 
         } catch (Exception e) {
-            System.out.println("[Gateway] => Lỗi Token (Sai chữ ký hoặc Hết hạn): " + e.getMessage());
+            logger.error("AuthenticationFilter filter error path: {} with error detail: {}", path, e);
             return this.onError(exchange, "Invalid or expired token", HttpStatus.UNAUTHORIZED);
         }
     }

@@ -1,22 +1,27 @@
 package fundtransfer.presentation.service.impl;
 
+import fundtransfer.presentation.exception.ErrorCode;
+import fundtransfer.presentation.exception.TransferException;
 import fundtransfer.presentation.model.TransferRequest;
 import fundtransfer.presentation.service.FundTransferService;
 import fundtransfer.presentation.util.SecurityContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FundTransferServiceImpl implements FundTransferService {
+    private static Logger logger = LoggerFactory.getLogger(FundTransferServiceImpl.class);
+
     @Override
     public void transfer(TransferRequest requestBody) {
-        // Cần CIF ở đâu thì gọi thẳng Class tiện ích ra lấy, cực kỳ sang chảnh!
-        String currentCif = SecurityContextUtil.getCurrentCif();
-        System.out.println("currentCif kq: " + currentCif);
-
-        if (currentCif == null || currentCif.isEmpty()) {
-            throw new RuntimeException("Không xác định được danh tính khách hàng!");
+        String cifNumber = SecurityContextUtil.getCurrentCif();
+        logger.info("Start FundTransferServiceImpl transfer with cifNumber: {}", SecurityContextUtil.getCurrentCif());
+        cifNumber = null;
+        if (cifNumber == null || cifNumber.isEmpty()) {
+            throw new TransferException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
-        System.out.println("Xử lý trừ tiền cho CIF: " + currentCif);
+        logger.info("End FundTransferServiceImpl transfer success with cif: {}", cifNumber);
     }
 }

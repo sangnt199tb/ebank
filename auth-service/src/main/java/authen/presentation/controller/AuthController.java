@@ -2,6 +2,8 @@ package authen.presentation.controller;
 
 import authen.presentation.model.LoginRequest;
 import authen.presentation.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,35 +17,27 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+    private final AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        // Nhập mật khẩu bạn muốn băm vào đây (ví dụ: chuỗi bạn vừa gửi)
-//        String rawPassword = "hd1i21389k1j31031931nhuh91j1nu";
-
-        // Nếu bạn vẫn muốn dùng pass cũ thì đổi thành:
-         String rawPassword = "Putin@140223";
-
-        String encodedPassword = encoder.encode(rawPassword);
-
-        System.out.println("Mật khẩu gốc: " + rawPassword);
-        System.out.println("Chuỗi BCrypt copy vào mock: " + encodedPassword);
-
         try {
-            System.out.println("Start AuthController login");
+            logger.info("AuthController login with user: {}", request.getUsername());
             String token = authService.login(
                     request.getUsername(),
                     request.getPassword()
             );
-
+            logger.info("AuthController login success with user: {}", request.getUsername());
             return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e){
-            System.out.println("AuthController login with error detail: {}" + e);
+            logger.error("AuthController login with error detail: {}", e);
             throw e;
         }
     }

@@ -1,6 +1,6 @@
-package onboard.presentation.exception;
+package fundtransfer.presentation.exception;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
@@ -21,7 +21,7 @@ public class ErrorMessageLoader {
             Charset charset = StandardCharsets.UTF_8;
 
             Properties englishMessage = new Properties();
-            englishMessage.load(new InputStreamReader(new ClassPathResource("message_en.properties").getInputStream(), charset));
+            englishMessage.load(new InputStreamReader(new ClassPathResource("message_transfer_en.properties").getInputStream(), charset));
 
             errorMessageMap = englishMessage.entrySet().stream().collect(
                     Collectors.toMap(
@@ -35,8 +35,7 @@ public class ErrorMessageLoader {
             );
 
             Properties vietnameseMessage = new Properties();
-            // Sử dụng ClassPathResource
-            vietnameseMessage.load(new InputStreamReader(new ClassPathResource("message_vn.properties").getInputStream(), charset));
+            vietnameseMessage.load(new InputStreamReader(new ClassPathResource("message_transfer_vn.properties").getInputStream(), charset));
 
             errorMessageMap.forEach((key, value) -> value.setVn(vietnameseMessage.getProperty(key)));
         } catch (IOException e) {
