@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # --- CƠ SỞ DỮ LIỆU ---
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Putin@140223"
+      MYSQL_DATABASE: "customer_ebank"
+    networks:
+      - ebank-network
+    # Giới hạn RAM cho DB để tránh treo server 2GB
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+
+  # --- EUREKA SERVER ---
+  discovery-service:
+    build: ./discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - ebank-network
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+
+  # --- CUSTOMER SERVICE ---
+  customer-service:
+    build: ./customer-service
+    container_name: customer-service
+    depends_on:
+      - discovery-service
+      - mysql-db
+    environment:
+      # Ghi đè cấu hình localhost bằng tên service trong Docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/customer_ebank
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_IP_ADDRESS=customer-service
+    networks:
+      - ebank-network
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+
+networks:
+  ebank-network:
+    driver: bridge

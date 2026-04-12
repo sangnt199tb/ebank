@@ -79,7 +79,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         }
     }
 
-    // Hàm phụ trợ ném lỗi 401
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         exchange.getResponse().setStatusCode(httpStatus);
         return exchange.getResponse().setComplete();
