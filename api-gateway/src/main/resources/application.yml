@@ -36,7 +36,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://ebank-discovery-service:8761/eureka/
 
 jwt:
   secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
