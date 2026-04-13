@@ -1,6 +1,5 @@
 package onboard.presentation.service.impl;
 
-import customer.presentation.model.CustomerModel;
 import onboard.presentation.client.CustomerClient;
 import onboard.presentation.client.FileClient;
 import onboard.persistence.domain.SdkConfigEntity;
@@ -8,6 +7,7 @@ import onboard.persistence.repository.SdkConfigRepo;
 import onboard.presentation.exception.ErrorCode;
 import onboard.presentation.exception.OnboardingException;
 import onboard.presentation.model.ConfigSdkModel;
+import onboard.presentation.model.CustomerModel;
 import onboard.presentation.service.ConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

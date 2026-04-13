@@ -1,6 +1,6 @@
 package onboard.presentation.client;
 
-import customer.presentation.model.CustomerModel;
+import onboard.presentation.model.CustomerModel;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
