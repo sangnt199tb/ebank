@@ -102,6 +102,22 @@ services:
         limits:
           memory: 350M
 
+  onboard-service:
+    build: ./onboard-service
+    container_name: onboard-service
+    depends_on:
+      - discovery-service
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/onboard_ebank
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_IP_ADDRESS=onboard-service
+    networks:
+      - ebank-network
+    deploy:
+      resources:
+        limits:
+          memory: 350M
 networks:
   ebank-network:
     driver: bridge
