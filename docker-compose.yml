@@ -46,17 +46,16 @@ services:
       resources:
         limits:
           memory: 350M
-  bankadmin-service:
+  bankadmin-service: # Tên service chuẩn
     build: ./bankadmin-service
-    container_name: bankamdin-service
+    container_name: bankadmin-service
     depends_on:
       - discovery-service
       - mysql-db
     environment:
-      # Ghi đè cấu hình localhost bằng tên service trong Docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/bankadmin_ebank
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
-      - EUREKA_INSTANCE_IP_ADDRESS=customer-service
+      - EUREKA_INSTANCE_IP_ADDRESS=bankadmin-service # Đã sửa từ customer-service
     networks:
       - ebank-network
     deploy:
