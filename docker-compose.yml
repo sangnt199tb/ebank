@@ -118,6 +118,23 @@ services:
       resources:
         limits:
           memory: 350M
+
+  file-service:
+    build: ./file-service
+    container_name: file-service
+    depends_on:
+      - discovery-service
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/file_ebank
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_IP_ADDRESS=file-service
+    networks:
+      - ebank-network
+    deploy:
+      resources:
+        limits:
+          memory: 350M
 networks:
   ebank-network:
     driver: bridge
