@@ -41,7 +41,7 @@ services:
     depends_on:
       - discovery-service
     environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
     networks:
       - ebank-network
     deploy:
@@ -58,7 +58,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/auth_ebank
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
     networks:
       - ebank-network
     deploy:
@@ -75,7 +75,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/customer_ebank
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=customer-service
     networks:
       - ebank-network
@@ -93,7 +93,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/bankadmin_ebank
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=bankadmin-service
     networks:
       - ebank-network
@@ -110,7 +110,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/onboard_ebank
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=onboard-service
     networks:
       - ebank-network
@@ -127,7 +127,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/file_ebank
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=file-service
     networks:
       - ebank-network
@@ -144,7 +144,7 @@ services:
       - mysql-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/fundtransfer-service
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank@2026@discovery-service:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank%402026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=fundtransfer-service
     networks:
       - ebank-network
