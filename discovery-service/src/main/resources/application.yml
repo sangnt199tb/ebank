@@ -9,4 +9,4 @@ spring:
   security:
     user:
       name: admin
-      password: Ebank@2026
+      password: Ebank_2026
