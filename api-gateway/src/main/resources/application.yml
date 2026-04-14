@@ -7,6 +7,22 @@ spring:
 
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true # Nhìn vào Eureka để tự động tạo đường dẫn
+          lower-case-service-id: true # Ép tên service trên URL thành chữ thường (ví dụ: /auth-service)
+      # 2. CẤU HÌNH CORS (Cho phép Frontend gọi API)
+      globalcors:
+        cors-configurations:
+          '[/**]': # Áp dụng cho mọi đường dẫn API
+            allowedOrigins: "*" # Cho phép mọi Frontend gọi vào (hoặc thay bằng URL FE của bạn như http://localhost:3000)
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
       routes:
         - id: customer-service
           uri: lb://customer-service
@@ -36,7 +52,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://ebank-discovery-service:8761/eureka/
+      defaultZone: http://admin:Ebank_2026@discovery-service:8761/eureka/
 
 jwt:
   secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
