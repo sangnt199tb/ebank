@@ -25,9 +25,11 @@ spring:
             allowedHeaders: "*"
       routes:
         - id: customer-service
-          uri: lb://customer-service
+          uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/customer-service/v1/customer/**
+          filters:
+            - StripPrefix=1 # Gateway sẽ bỏ cái '/auth-service' ở đầu trước khi gửi đi
         - id: onboard-service
           uri: lb://onboard-service
           predicates:
@@ -45,9 +47,11 @@ spring:
           predicates:
             - Path=/fundtransfer-service/**
         - id: auth-service
-          uri: lb://auth-service
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-service/v1/**
+          filters:
+            - StripPrefix=1 # Gateway sẽ bỏ cái '/auth-service' ở đầu trước khi gửi đi
 
 eureka:
   client:
