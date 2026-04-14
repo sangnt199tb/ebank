@@ -56,8 +56,8 @@ services:
   auth-service:
     build: ./auth-service
     container_name: auth-service
-    ports:
-      - "8087:8087"
+    #ports:
+    #  - "8087:8087"
     depends_on:
       - discovery-service
       - mysql-db
