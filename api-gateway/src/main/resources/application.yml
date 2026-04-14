@@ -9,7 +9,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true # Nhìn vào Eureka để tự động tạo đường dẫn
+          enabled: false # Nhìn vào Eureka để tự động tạo đường dẫn
           lower-case-service-id: true # Ép tên service trên URL thành chữ thường (ví dụ: /auth-service)
       # 2. CẤU HÌNH CORS (Cho phép Frontend gọi API)
       globalcors:
@@ -28,8 +28,6 @@ spring:
           uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/customer-service/v1/customer/**
-          filters:
-            - StripPrefix=1 # Gateway sẽ bỏ cái '/auth-service' ở đầu trước khi gửi đi
         - id: onboard-service
           uri: lb://onboard-service
           predicates:
@@ -50,8 +48,6 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-service/v1/**
-          filters:
-            - StripPrefix=1 # Gateway sẽ bỏ cái '/auth-service' ở đầu trước khi gửi đi
 
 eureka:
   client:
