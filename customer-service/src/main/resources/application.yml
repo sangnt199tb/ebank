@@ -1,7 +1,7 @@
 server:
   port: 8081
-  servlet:
-    context-path: /customer-service
+  #servlet:
+    #context-path: /customer-service
 
 spring:
   datasource:
@@ -24,6 +24,6 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://ebank-discovery-service:8761/eureka/
+      defaultZone: http://admin:Ebank_2026@discovery-service:8761/eureka/
   instance:
     prefer-ip-address: true
