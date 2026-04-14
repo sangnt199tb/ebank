@@ -48,6 +48,9 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/api-gateway:/app/logs
 
   # --- AUTH SERVICE ---
   auth-service:
@@ -65,6 +68,9 @@ services:
       resources:
         limits:
           memory: 300M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/auth-service:/app/logs
 
   # --- CUSTOMER SERVICE ---
   customer-service:
@@ -83,6 +89,9 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/customer-service:/app/logs
 
   # --- BANK ADMIN SERVICE ---
   bankadmin-service:
@@ -101,6 +110,9 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/bankadmin-service:/app/logs
 
   onboard-service:
     build: ./onboard-service
@@ -118,6 +130,9 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/onboard-service:/app/logs
 
   file-service:
     build: ./file-service
@@ -135,6 +150,10 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/file-service:/app/logs
+
 
   fundtransfer-service:
     build: ./fundtransfer-service
@@ -152,6 +171,9 @@ services:
       resources:
         limits:
           memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/fundtransfer-service:/app/logs
 networks:
   ebank-network:
     driver: bridge
