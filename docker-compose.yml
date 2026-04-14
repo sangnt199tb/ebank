@@ -3,8 +3,8 @@ services:
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
-    ports:
-      - "3306:3306"
+    #ports:
+    #  - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "Putin@140223"
       MYSQL_DATABASE: "customer_ebank"
@@ -23,8 +23,8 @@ services:
   discovery-service:
     build: ./discovery-service
     container_name: discovery-service
-    ports:
-      - "8761:8761"
+    #ports:
+    #  - "8761:8761"
     networks:
       - ebank-network
     deploy:
