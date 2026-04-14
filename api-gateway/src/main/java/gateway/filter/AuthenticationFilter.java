@@ -37,7 +37,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         logger.info("AuthenticationFilter filter with path: {}", path);
 
         // check api public
-        boolean isPublicEndpoint = openEndpoints.stream().anyMatch(path::contains);
+        boolean isPublicEndpoint = openEndpoints.stream().anyMatch(path::startsWith);
         logger.info("AuthenticationFilter filter isPublicEndpoint: {} and path: {}", isPublicEndpoint, path);
 
         if (isPublicEndpoint) {

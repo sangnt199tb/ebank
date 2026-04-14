@@ -59,4 +59,8 @@ jwt:
 
 api:
   gateway:
-    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka
+    open-endpoints:
+      - /auth-service/v1/auth/login  # API Đăng nhập
+      - /auth-service/v1/auth/register # API Đăng ký (nếu có sau này)
+      - /onboard-service/            # API cho khách hàng mới
+      - /eureka                      # Dashboard của Eureka
