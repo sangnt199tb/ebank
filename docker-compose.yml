@@ -158,7 +158,6 @@ services:
       # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
       - /home/devops_sang/logs/file-service:/app/logs
 
-
   fundtransfer-service:
     build: ./fundtransfer-service
     container_name: fundtransfer-service
@@ -166,7 +165,27 @@ services:
       - discovery-service
       - mysql-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/fundtransfer-service
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/fundtransfer-ebank
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank_2026@discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_IP_ADDRESS=fundtransfer-service
+    networks:
+      - ebank-network
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    volumes:
+      # Lấy đường dẫn tuyệt đối từ thư mục gốc của user devops_sang
+      - /home/devops_sang/logs/fundtransfer-service:/app/logs
+
+  commom-service:
+    build: ./commom-service
+    container_name: commom-service
+    depends_on:
+      - discovery-service
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/commom-ebank
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://admin:Ebank_2026@discovery-service:8761/eureka/
       - EUREKA_INSTANCE_IP_ADDRESS=fundtransfer-service
     networks:
