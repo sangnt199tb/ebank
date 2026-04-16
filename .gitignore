@@ -33,3 +33,4 @@ logs/
 # Environment
 # ======================
 .env
+**/application-local.yml

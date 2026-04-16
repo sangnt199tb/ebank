@@ -1,16 +1,16 @@
 server:
-  port: 8087
+  port: 8086
   servlet:
-    context-path: /auth-service
+    context-path: /common-service
 
 spring:
   datasource:
-    url: jdbc:mysql://mysql-db:3306/auth_ebank
+    url: jdbc:mysql://localhost:3306/common_ebank
     username: root
     password: Putin@140223
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
-    name: auth-service
+    name: common-service
 
   jpa:
     hibernate:
@@ -24,7 +24,6 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://admin:Ebank_2026@discovery-service:8761/eureka/
+      defaultZone: http://ebank-discovery-service:8761/eureka/
   instance:
     prefer-ip-address: true
-    #ip-address: 127.0.0.1
