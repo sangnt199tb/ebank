@@ -9,6 +9,10 @@ spring:
     username: root
     password: Putin@140223
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
   application:
     name: onboard-service
 

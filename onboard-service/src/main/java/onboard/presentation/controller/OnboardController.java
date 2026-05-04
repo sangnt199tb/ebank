@@ -1,48 +1,35 @@
 package onboard.presentation.controller;
 
-import onboard.presentation.model.ConfigSdkModel;
-import onboard.presentation.service.ConfigService;
+import onboard.presentation.model.CaptchaResponse;
+import onboard.presentation.model.CheckPhoneEmailReq;
+import onboard.presentation.model.CheckPhoneEmailRes;
+import onboard.presentation.service.OnboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/v1/onboard")
 public class OnboardController {
 
-    private static Logger logger = LoggerFactory.getLogger(OnboardController.class);
+    private final OnboardService onboardService;
 
     @Autowired
-    private ConfigService configService;
-
-    @RequestMapping(method = RequestMethod.GET, value = "/test-onboard")
-    @ResponseStatus(HttpStatus.OK)
-    public String getInfoCompany(){
-        return "OK onboard roi do";
+    public OnboardController(OnboardService onboardService) {
+        this.onboardService = onboardService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/get-all-config")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ConfigSdkModel> getAllConfigSdk(){
-        return configService.getAllConfigSdk();
+    @GetMapping("/captcha")
+    public ResponseEntity<CaptchaResponse> getCaptcha() throws IOException {
+        return onboardService.getCaptcha();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/get-one")
-    @ResponseStatus(HttpStatus.OK)
-    public ConfigSdkModel getConfigById(){
-        return configService.getAllConfigSdkById();
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/call-file-from-onboard")
-    @ResponseStatus(HttpStatus.OK)
-    public String getOnboardCallFile(){
-        return configService.getOnboardCallFile();
+    @PostMapping("/check-phone-email")
+    public ResponseEntity<CheckPhoneEmailRes> checkPhoneAndEmail(@RequestBody CheckPhoneEmailReq request) {
+        return onboardService.checkPhoneAndEmail(request);
     }
 }

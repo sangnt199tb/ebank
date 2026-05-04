@@ -5,10 +5,14 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://mysql-db:3306/customer_ebank
+    url: jdbc:mysql://mysql-db:3306/onboard_ebank
     username: root
     password: Putin@140223
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
   application:
     name: onboard-service
 
