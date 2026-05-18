@@ -43,4 +43,4 @@ jwt:
 
 api:
   gateway:
-    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka
+    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka, /file-service/v1/file/upload

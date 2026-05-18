@@ -62,7 +62,7 @@ public class MinioServiceImpl implements MinioService {
     public InputStream downloadFile(String path) {
         logger.info("MinioServiceImpl downloadFile with path: {}", path);
         try {
-            String bucketNameDownload = path.contains("Onboard") ? bucketName : "file";
+            String bucketNameDownload = path.contains("onboard") ? bucketName : "file";
             return minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucketNameDownload)
                     .object(path).build());

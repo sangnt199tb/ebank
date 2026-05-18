@@ -1,12 +1,13 @@
 package onboard.presentation.service.impl;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import onboard.presentation.client.FileClient;
 import onboard.presentation.controller.OnboardController;
+import onboard.presentation.dto.DownloadFileReq;
+import onboard.presentation.dto.DownloadFileRes;
 import onboard.presentation.exception.ErrorCode;
 import onboard.presentation.exception.OnboardingException;
-import onboard.presentation.model.CaptchaResponse;
-import onboard.presentation.model.CheckPhoneEmailReq;
-import onboard.presentation.model.CheckPhoneEmailRes;
+import onboard.presentation.model.*;
 import onboard.presentation.service.OnboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +26,17 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class OnboardServiceImpl implements OnboardService {
-    private static Logger logger = LoggerFactory.getLogger(OnboardController.class);
+    private static Logger logger = LoggerFactory.getLogger(OnboardServiceImpl.class);
 
     private final DefaultKaptcha defaultKaptcha;
     private final StringRedisTemplate redisTemplate;
+    private final FileClient fileClient;
 
     @Autowired
-    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate) {
+    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient) {
         this.defaultKaptcha = defaultKaptcha;
         this.redisTemplate = redisTemplate;
+        this.fileClient = fileClient;
     }
 
     @Override
@@ -82,5 +85,25 @@ public class OnboardServiceImpl implements OnboardService {
             logger.error("OnboardController checkPhoneAndEmail with error detail: {}", e);
             throw e;
         }
+    }
+
+    @Override
+    public ResponseEntity<CompareFaceRes> compareFace(CompareFaceReq request) {
+        try {
+            logger.info("OnboardServiceImpl compareFace with request: {}", request);
+            // validate id transaction
+
+            // call module file
+            DownloadFileReq downloadFileReq = new DownloadFileReq();
+            downloadFileReq.setPhoneNumber("0387501614");
+            downloadFileReq.setFileId(request.getIdImageFont());
+            DownloadFileRes downloadFileRes = fileClient.callFileClient(downloadFileReq);
+            logger.info("OnboardServiceImpl compareFace downloadFileRes: {}", downloadFileRes);
+
+        } catch (Exception e){
+            logger.error("OnboardController compareFace with error detail: {}", e);
+            throw e;
+        }
+        return null;
     }
 }

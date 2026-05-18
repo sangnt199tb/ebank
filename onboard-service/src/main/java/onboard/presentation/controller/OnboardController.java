@@ -1,8 +1,6 @@
 package onboard.presentation.controller;
 
-import onboard.presentation.model.CaptchaResponse;
-import onboard.presentation.model.CheckPhoneEmailReq;
-import onboard.presentation.model.CheckPhoneEmailRes;
+import onboard.presentation.model.*;
 import onboard.presentation.service.OnboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,5 +29,10 @@ public class OnboardController {
     @PostMapping("/check-phone-email")
     public ResponseEntity<CheckPhoneEmailRes> checkPhoneAndEmail(@RequestBody CheckPhoneEmailReq request) {
         return onboardService.checkPhoneAndEmail(request);
+    }
+
+    @PostMapping("/compare-face")
+    public ResponseEntity<CompareFaceRes> compareFace(@RequestBody CompareFaceReq request) {
+        return onboardService.compareFace(request);
     }
 }
