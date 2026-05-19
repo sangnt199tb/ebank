@@ -42,34 +42,54 @@ public class OnboardListener {
         FileOnboardRes fileOnboardRes = new FileOnboardRes();
         try {
             logger.info("OnboardListener downloadFileOnboard fileOnboardReq: {}", fileOnboardReq);
-            if(StringUtils.isBlank(fileOnboardReq.getFileId()) ||
-                StringUtils.isBlank(fileOnboardReq.getPhoneNumber())){
+            if(StringUtils.isBlank(fileOnboardReq.getFileIdIc())
+                    || StringUtils.isBlank(fileOnboardReq.getPhoneNumber())
+                    || StringUtils.isBlank(fileOnboardReq.getFileIdImage())){
                 throw new FileException(ErrorCode.FILE_REQUEST_IN_VALID);
             }
-            ManageFileEntity manageFileEntity = manageFileRepo.findFirstById(fileOnboardReq.getFileId());
 
+            // get path ic
+            ManageFileEntity manageFileEntity = manageFileRepo.findFirstById(fileOnboardReq.getFileIdIc());
             if(Objects.isNull(manageFileEntity)){
                 throw new FileException(ErrorCode.FILE_NOT_FOUND);
             }
 
-            InputStream inputStream = minioService.downloadFile(manageFileEntity.getFilePath());
+            String prefix = "data:image/png;base64,";
 
+            InputStream inputStream = minioService.downloadFile(manageFileEntity.getFilePath());
             byte[] bytes = inputStream.readAllBytes();
-            String base64String = Base64.getEncoder().encodeToString(bytes);
-            fileOnboardRes.setBaseString(base64String);
+            String base64StringIc = Base64.getEncoder().encodeToString(bytes);
+            fileOnboardRes.setBaseStringIc(prefix + base64StringIc);
+
+            // get path image
+            ManageFileEntity manageFileImage = manageFileRepo.findFirstById(fileOnboardReq.getFileIdImage());
+            if(Objects.isNull(manageFileImage)){
+                throw new FileException(ErrorCode.FILE_NOT_FOUND);
+            }
+
+            InputStream iSImage = minioService.downloadFile(manageFileImage.getFilePath());
+            byte[] bytesImage = iSImage.readAllBytes();
+            String base64StringImage = Base64.getEncoder().encodeToString(bytesImage);
+            fileOnboardRes.setBaseStringImage(prefix + base64StringImage);
+
+            //set status
+            fileOnboardRes.setStatus(ErrorCode.SUCCESS);
+
             return fileOnboardRes;
         } catch (Exception e){
+            logger.error("OnboardListener downloadFileOnboard with error detail: {}", e);
+
             if(e instanceof FileException){
                 logger.error("Loi file vao day");
                 FileException fileException = (FileException) e;
                 ErrorObject errorObject = fileException.getResponse().getErrorMessage();
-                fileOnboardRes.setBaseString(errorObject.getErrorCode() +
-                        "_" + errorObject.getMessages().getVn());
+                fileOnboardRes.setStatus(ErrorCode.ERROR);
+                fileOnboardRes.setErrorDesc(errorObject.getMessages().getEn());
                 return fileOnboardRes;
             }
 
-            logger.error("OnboardListener downloadFileOnboard with error detail: {}", e);
-            throw e;
+            fileOnboardRes.setStatus(ErrorCode.INTERNAL_SERVER_ERROR);
+            return fileOnboardRes;
         }
     }
 }

@@ -1,8 +1,12 @@
 package onboard.presentation.service.impl;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import onboard.integration.model.CompareFaceInterReq;
+import onboard.integration.model.CompareFaceInterRes;
+import onboard.integration.service.EkycService;
+import onboard.persistence.domain.OnboardingTransactionEntity;
+import onboard.persistence.service.TransactionService;
 import onboard.presentation.client.FileClient;
-import onboard.presentation.controller.OnboardController;
 import onboard.presentation.dto.DownloadFileReq;
 import onboard.presentation.dto.DownloadFileRes;
 import onboard.presentation.exception.ErrorCode;
@@ -21,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -31,12 +36,16 @@ public class OnboardServiceImpl implements OnboardService {
     private final DefaultKaptcha defaultKaptcha;
     private final StringRedisTemplate redisTemplate;
     private final FileClient fileClient;
+    private final TransactionService transactionService;
+    private final EkycService ekycService;
 
     @Autowired
-    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient) {
+    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService) {
         this.defaultKaptcha = defaultKaptcha;
         this.redisTemplate = redisTemplate;
         this.fileClient = fileClient;
+        this.transactionService = transactionService;
+        this.ekycService = ekycService;
     }
 
     @Override
@@ -78,8 +87,12 @@ public class OnboardServiceImpl implements OnboardService {
 
             redisTemplate.delete(redisKey);
 
+            // create transaction
+            OnboardingTransactionEntity entity = transactionService.postCreateTransaction(request);
+
             CheckPhoneEmailRes checkPhoneEmailRes = new CheckPhoneEmailRes();
-            checkPhoneEmailRes.setTransId(UUID.randomUUID().toString());
+            checkPhoneEmailRes.setTransId(entity.getId());
+
             return ResponseEntity.ok(checkPhoneEmailRes);
         } catch (Exception e){
             logger.error("OnboardController checkPhoneAndEmail with error detail: {}", e);
@@ -96,14 +109,35 @@ public class OnboardServiceImpl implements OnboardService {
             // call module file
             DownloadFileReq downloadFileReq = new DownloadFileReq();
             downloadFileReq.setPhoneNumber("0387501614");
-            downloadFileReq.setFileId(request.getIdImageFont());
+            downloadFileReq.setFileIdIc(request.getIdImageFont());
+            downloadFileReq.setFileIdImage(request.getIdImageFace());
             DownloadFileRes downloadFileRes = fileClient.callFileClient(downloadFileReq);
             logger.info("OnboardServiceImpl compareFace downloadFileRes: {}", downloadFileRes);
+
+            // call compare face
+            CompareFaceInterReq compareFaceInterReq = CompareFaceInterReq
+                    .builder()
+                    .idImage(downloadFileRes.getBaseStringIc().replaceAll("[\\n\\r\\s]", ""))
+                    .selfieImage(downloadFileRes.getBaseStringImage().replaceAll("[\\n\\r\\s]", ""))
+                    .build();
+            CompareFaceInterRes compareFaceAi = ekycService.compareFaceAi(compareFaceInterReq);
+            logger.info("OnboardServiceImpl compareFace compareFaceAi: {}", compareFaceAi);
+
+            if(Objects.isNull(compareFaceAi)){
+                throw new OnboardingException(ErrorCode.FACE_MATCH_FAILED);
+            }
+
+            if(!compareFaceAi.isMatch()){
+                throw new OnboardingException(ErrorCode.FACE_MATCH_FAILED);
+            }
+
+            CompareFaceRes compareFaceRes = new CompareFaceRes();
+            compareFaceRes.setId(request.getId());
+            return ResponseEntity.ok(compareFaceRes);
 
         } catch (Exception e){
             logger.error("OnboardController compareFace with error detail: {}", e);
             throw e;
         }
-        return null;
     }
 }

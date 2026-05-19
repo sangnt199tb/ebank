@@ -1,6 +1,8 @@
 package file.presentaion.exception;
 
 public interface ErrorCode {
+    String SUCCESS = "0";
+    String ERROR = "1";
     String INTERNAL_SERVER_ERROR = "HYD-35-001";
     String FILE_NAME_ERROR = "HYD-35-002";
     String FILE_TYPE_ERROR = "HYD-35-003";

@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class DownloadFileReq {
     private String phoneNumber;
-    private String fileId;
+    private String fileIdIc;
+    private String fileIdImage;
 }

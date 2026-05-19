@@ -4,5 +4,8 @@ import lombok.Data;
 
 @Data
 public class FileOnboardRes {
-    private String baseString;
+    private String status;
+    private String errorDesc;
+    private String baseStringIc;
+    private String baseStringImage;
 }
