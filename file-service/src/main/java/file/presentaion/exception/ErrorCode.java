@@ -7,4 +7,5 @@ public interface ErrorCode {
     String FILE_NOT_FOUND="HYD-35-004";
     String FACE_MATCH_FAILED = "HYD-35-005";
     String TIME_OUT = "HYD-35-006";
+    String FILE_REQUEST_IN_VALID = "HYD-35-007";
 }
