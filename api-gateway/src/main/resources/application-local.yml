@@ -4,34 +4,22 @@ server:
 spring:
   application:
     name: api-gateway
-
   cloud:
     gateway:
-      routes:
-        - id: customer-service
-          uri: lb://customer-service
+      discovery:
+        locator:
+          enabled: true # Bật tính năng tự động tìm route qua Eureka
+          lower-case-service-id: true # Tự động viết thường tên service (vd: FILE-SERVICE -> file-service)
+          # 1. Tự động gắn tiền tố /api-gateway/ cho MỌI service
           predicates:
-            - Path=/customer-service/v1/customer/**
-        - id: onboard-service
-          uri: lb://onboard-service
-          predicates:
-              - Path=/onboard-service/**
-        - id: file-service
-          uri: lb://file-service
-          predicates:
-              - Path=/file-service/v1/file/**
-        - id: bankadmin-service
-          uri: lb://bankadmin-service
-          predicates:
-              - Path=/bankadmin-service/**
-        - id: fundtransfer-service
-          uri: lb://fundtransfer-service
-          predicates:
-            - Path=/fundtransfer-service/**
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth-service/v1/**
+            - name: Path
+              args:
+                pattern: "'/api-gateway/' + serviceId + '/**'"
+          # 2. Tự động cắt tiền tố /api-gateway/ đi trước khi gọi xuống service con
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 1
 
 eureka:
   client:
@@ -43,4 +31,8 @@ jwt:
 
 api:
   gateway:
-    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka, /file-service/v1/file/upload
+    open-endpoints: >
+      /api-gateway/auth-service/auth/login,
+      /api-gateway/onboard-service/,
+      /api-gateway/eureka,
+      /api-gateway/file-service/v1/file/upload

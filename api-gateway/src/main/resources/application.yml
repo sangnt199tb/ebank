@@ -4,43 +4,33 @@ server:
 spring:
   application:
     name: api-gateway
-
   cloud:
     gateway:
-      routes:
-        - id: customer-service
-          uri: lb://customer-service
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
           predicates:
-            - Path=/customer-service/v1/customer/**
-        - id: onboard-service
-          uri: lb://onboard-service
-          predicates:
-              - Path=/onboard-service/**
-        - id: file-service
-          uri: lb://file-service
-          predicates:
-              - Path=/file-service/v1/file/**
-        - id: bankadmin-service
-          uri: lb://bankadmin-service
-          predicates:
-              - Path=/bankadmin-service/**
-        - id: fundtransfer-service
-          uri: lb://fundtransfer-service
-          predicates:
-            - Path=/fundtransfer-service/**
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth-service/v1/**
+            - name: Path
+              args:
+                pattern: "'/api-gateway/' + serviceId + '/**'"
+          filters:
+            - name: StripPrefix
+              args:
+                parts: 1
 
 eureka:
   client:
     service-url:
-      defaultZone: http://ebank-discovery-service:8761/eureka/
+      defaultZone: http://admin:Ebank_2026@discovery-service:8761/eureka/
 
 jwt:
   secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
 
 api:
   gateway:
-    open-endpoints: /auth-service/auth/login,/onboard-service/,/eureka
+    open-endpoints: >
+      /api-gateway/auth-service/auth/login,
+      /api-gateway/onboard-service/,
+      /api-gateway/eureka,
+      /api-gateway/file-service/v1/file/upload

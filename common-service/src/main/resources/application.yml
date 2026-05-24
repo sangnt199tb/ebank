@@ -1,5 +1,5 @@
 server:
-  port: 8086
+  port: 8083
   servlet:
     context-path: /common-service
 
@@ -20,6 +20,12 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
+api:
+  internal:
+    gateway-secret: Ebank@SecretKey2026
 
 eureka:
   client:

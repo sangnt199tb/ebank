@@ -5,8 +5,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SecurityContextUtil {
-
-    // Hàm lấy Request hiện tại đang chạy
     public static HttpServletRequest getCurrentHttpRequest() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
@@ -15,7 +13,6 @@ public class SecurityContextUtil {
         return null;
     }
 
-    // Hàm lấy thẳng số CIF
     public static String getCurrentCif() {
         HttpServletRequest request = getCurrentHttpRequest();
         if (request != null) {

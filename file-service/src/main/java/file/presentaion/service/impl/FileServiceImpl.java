@@ -19,6 +19,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.UUID;
 
@@ -43,6 +44,12 @@ public class FileServiceImpl implements FileService {
         try {
             logger.info("FileServiceImpl uploadFile with phoneNumber: {} and module: {} and fileType: {}",
                     phoneNumber, file, module);
+
+            //validate key
+            Enumeration<String> key
+                    = httpServletRequest.getHeaders("X-Internal-Gateway-Secret");
+            logger.info("FileServiceImpl uploadFile key: {}", key);
+
             // validate file name
             Validate.validateFileName(file.getOriginalFilename());
 

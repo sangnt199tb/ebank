@@ -40,8 +40,11 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         boolean isPublicEndpoint = openEndpoints.stream().anyMatch(path::contains);
         logger.info("AuthenticationFilter filter isPublicEndpoint: {} and path: {}", isPublicEndpoint, path);
 
+        ServerHttpRequest.Builder requestBuilder = request.mutate()
+                .header("X-Internal-Gateway-Secret", "Ebank@SecretKey2026");
+
         if (isPublicEndpoint) {
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(requestBuilder.build()).build());
         }
 
         // CHECK HEADER AUTHORIZATION
@@ -68,6 +71,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header("X-User-CIF", cif != null ? cif : "")
                     .header("X-User-Role", role != null ? role : "")
+                    .header("X-Internal-Gateway-Secret", "Ebank@SecretKey2026")
                     .build();
 
             logger.info("AuthenticationFilter filter success with path: {}", path);

@@ -1,5 +1,5 @@
 server:
-  port: 8087
+  port: 8081
   servlet:
     context-path: /auth-service
 
@@ -27,4 +27,3 @@ eureka:
       defaultZone: http://admin:Ebank_2026@discovery-service:8761/eureka/
   instance:
     prefer-ip-address: true
-    #ip-address: 127.0.0.1
