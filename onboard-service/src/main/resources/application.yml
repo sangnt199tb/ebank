@@ -25,6 +25,18 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
+jwt:
+  secret: K7vN3pL9xM2qR5wT8jY4bC6zF1gH0dJ9sK5mN2bP
+api:
+  internal:
+    gateway-secret: Ebank@SecretKey2026
+    public-endpoints: >
+      /v1/onboard/captcha,
+      /v1/onboard/check-phone-email,
+      /v1/onboard/compare-face,
+      /v1/fwd/**
+
+
 eureka:
   client:
     service-url:

@@ -31,6 +31,6 @@ api:
   gateway:
     open-endpoints: >
       /api-gateway/auth-service/auth/login,
-      /api-gateway/onboard-service/,
+      /api-gateway/onboard-service/v1/onboard,
       /api-gateway/eureka,
       /api-gateway/file-service/v1/file/upload
