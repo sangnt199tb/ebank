@@ -1,6 +1,9 @@
 package onboard.presentation.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.nimbusds.jose.shaded.gson.Gson;
 import onboard.integration.model.CompareFaceInterReq;
 import onboard.integration.model.CompareFaceInterRes;
 import onboard.integration.service.EkycService;
@@ -9,10 +12,13 @@ import onboard.persistence.service.TransactionService;
 import onboard.presentation.client.FileClient;
 import onboard.presentation.dto.DownloadFileReq;
 import onboard.presentation.dto.DownloadFileRes;
+import onboard.presentation.dto.OnboardTransactionDto;
 import onboard.presentation.exception.ErrorCode;
 import onboard.presentation.exception.OnboardingException;
 import onboard.presentation.model.*;
 import onboard.presentation.service.OnboardService;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +38,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class OnboardServiceImpl implements OnboardService {
     private static Logger logger = LoggerFactory.getLogger(OnboardServiceImpl.class);
-
     private final DefaultKaptcha defaultKaptcha;
     private final StringRedisTemplate redisTemplate;
     private final FileClient fileClient;
     private final TransactionService transactionService;
     private final EkycService ekycService;
+    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService) {
@@ -88,10 +94,10 @@ public class OnboardServiceImpl implements OnboardService {
             redisTemplate.delete(redisKey);
 
             // create transaction
-            OnboardingTransactionEntity entity = transactionService.postCreateTransaction(request);
+            OnboardTransactionDto onboardTransactionDto = transactionService.postCreateTransaction(request);
 
             CheckPhoneEmailRes checkPhoneEmailRes = new CheckPhoneEmailRes();
-            checkPhoneEmailRes.setTransId(entity.getId());
+            checkPhoneEmailRes.setTransId(onboardTransactionDto.getId());
 
             return ResponseEntity.ok(checkPhoneEmailRes);
         } catch (Exception e){
@@ -105,10 +111,20 @@ public class OnboardServiceImpl implements OnboardService {
         try {
             logger.info("OnboardServiceImpl compareFace with request: {}", request);
             // validate id transaction
+            if(Objects.isNull(request)
+                    || StringUtils.isNotBlank(request.getIdImageFace())
+                    || StringUtils.isNotBlank(request.getIdImageFont())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
 
             // call module file
             DownloadFileReq downloadFileReq = new DownloadFileReq();
-            downloadFileReq.setPhoneNumber("0387501614");
+            downloadFileReq.setPhoneNumber(onboardTransaction.getPhoneNumber());
             downloadFileReq.setFileIdIc(request.getIdImageFont());
             downloadFileReq.setFileIdImage(request.getIdImageFace());
             DownloadFileRes downloadFileRes = fileClient.callFileClient(downloadFileReq);
@@ -136,8 +152,143 @@ public class OnboardServiceImpl implements OnboardService {
             return ResponseEntity.ok(compareFaceRes);
 
         } catch (Exception e){
-            logger.error("OnboardController compareFace with error detail: {}", e);
+            logger.error("OnboardServiceImpl compareFace with error detail: {}", e);
             throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<SendOtpToCustomerRes> sendOtpToCustomer(SendOtpToCustomerReq request) {
+        try {
+            logger.info("OnboardServiceImpl sendOtpToCustomer with request: {}", new Gson().toJson(request));
+            if(Objects.isNull(request) || StringUtils.isNotBlank(request.getTransId())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getTransId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+
+            // lấy ra số điện thoại và call common để gửi OTP
+
+
+
+            return null;
+        } catch (Exception e){
+            logger.error("OnboardServiceImpl sendOtpToCustomer with error detail: {}", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<ConfirmOtpRes> confirmOtp(ConfirmOtpReq request) {
+        try {
+            logger.info("OnboardServiceImpl confirmOtp with request: {}", new Gson().toJson(request));
+            if(Objects.isNull(request)
+                    || StringUtils.isNotBlank(request.getTransId())
+                    || StringUtils.isNotBlank(request.getOtpCode())
+                    || StringUtils.isNotBlank(request.getOtpTransactionId())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getTransId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+
+
+
+
+
+            return null;
+        } catch (Exception e){
+            logger.error("OnboardServiceImpl confirmOtp with error detail: {}", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<ConfirmInfoRes> confirmInfo(ConfirmInfoReq request) {
+        try {
+            logger.info("OnboardServiceImpl confirmInfo with request: {}", new Gson().toJson(request));
+            if(Objects.isNull(request)
+                    || StringUtils.isNotBlank(request.getTransId())
+                    || StringUtils.isNotBlank(request.getIcNumber())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getTransId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+
+
+
+
+
+            return null;
+        } catch (Exception e){
+            logger.error("OnboardServiceImpl confirmInfo with error detail: {}", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<RegisterCustomerRes> registerCustomer(RegisterCustomerReq request) {
+        try {
+            logger.info("OnboardServiceImpl registerCustomer with request: {}", new Gson().toJson(request));
+            if(Objects.isNull(request)
+                    || StringUtils.isNotBlank(request.getUserName())
+                    || StringUtils.isNotBlank(request.getPassword())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getTransId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+
+
+
+
+            return null;
+        } catch (Exception e){
+            logger.error("OnboardServiceImpl registerCustomer with error detail: {}", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public ResponseEntity<OcrCardRes> ocrCard(OcrCardReq request) {
+        try {
+            logger.info("OnboardServiceImpl ocrCard with request: {}", new Gson().toJson(request));
+            if(Objects.isNull(request)
+                    || StringUtils.isNotBlank(request.getIcBack())
+                    || StringUtils.isNotBlank(request.getIcFont())){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+            OnboardTransactionDto onboardTransaction
+                    = transactionService.getTransactionById(request.getTransId());
+            if(Objects.isNull(onboardTransaction)){
+                throw new OnboardingException(ErrorCode.INVALID_REQUEST);
+            }
+
+
+
+
+            return null;
+        } catch (Exception e){
+            logger.error("OnboardServiceImpl ocrCard with error detail: {}", e);
+            throw e;
+        }
+    }
+
+    private String toJson(Object obj){
+        try {
+            return OBJECT_MAPPER.writeValueAsString(obj);
+        } catch (JsonProcessingException e){
+            return ToStringBuilder.reflectionToString(obj);
         }
     }
 }

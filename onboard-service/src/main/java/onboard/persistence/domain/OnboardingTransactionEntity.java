@@ -48,4 +48,10 @@ public class OnboardingTransactionEntity {
 
     @Column(name = "update_date")
     private Timestamp updateDate;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "step")
+    private String step;
 }

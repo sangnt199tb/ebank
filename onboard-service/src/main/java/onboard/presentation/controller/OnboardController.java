@@ -29,8 +29,33 @@ public class OnboardController {
         return onboardService.checkPhoneAndEmail(request);
     }
 
+    @PostMapping("/send-otp-to-customer")
+    public ResponseEntity<SendOtpToCustomerRes> sendOtpToCustomer(@RequestBody SendOtpToCustomerReq request) {
+        return onboardService.sendOtpToCustomer(request);
+    }
+
+    @PostMapping("/confirm-otp")
+    public ResponseEntity<ConfirmOtpRes> confirmOtp(@RequestBody ConfirmOtpReq request) {
+        return onboardService.confirmOtp(request);
+    }
+
+    @PostMapping("/ocr-card")
+    public ResponseEntity<OcrCardRes> ocrCard(@RequestBody OcrCardReq request) {
+        return onboardService.ocrCard(request);
+    }
+
     @PostMapping("/compare-face")
     public ResponseEntity<CompareFaceRes> compareFace(@RequestBody CompareFaceReq request) {
         return onboardService.compareFace(request);
+    }
+
+    @PostMapping("/confirm-info")
+    public ResponseEntity<ConfirmInfoRes> confirmInfo(@RequestBody ConfirmInfoReq request) {
+        return onboardService.confirmInfo(request);
+    }
+
+    @PostMapping("/register-customer")
+    public ResponseEntity<RegisterCustomerRes> registerCustomer(@RequestBody RegisterCustomerReq request) {
+        return onboardService.registerCustomer(request);
     }
 }

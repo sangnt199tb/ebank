@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OnboardingTransactionRepo extends JpaRepository<OnboardingTransactionEntity, String> {
     OnboardingTransactionEntity findFirstByPhoneNumberOrderByCreatedDateDesc(String phoneNumber);
+    OnboardingTransactionEntity findFirstByIdOrderByCreatedDateDesc(String id);
 }

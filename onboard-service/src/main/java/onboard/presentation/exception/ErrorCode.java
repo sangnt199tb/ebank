@@ -9,4 +9,5 @@ public interface ErrorCode {
     String TIME_OUT = "HYD-35-006";
     String CAPTCHA_TIMEOUT = "HYD-35-007";
     String CAPTCHA_FAILED = "HYD-35-008";
+    String INVALID_REQUEST = "HYD-35-009";
 }
