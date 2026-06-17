@@ -7,12 +7,10 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import onboard.integration.model.CompareFaceInterReq;
 import onboard.integration.model.CompareFaceInterRes;
 import onboard.integration.service.EkycService;
-import onboard.persistence.domain.OnboardingTransactionEntity;
 import onboard.persistence.service.TransactionService;
+import onboard.presentation.client.CommonClient;
 import onboard.presentation.client.FileClient;
-import onboard.presentation.dto.DownloadFileReq;
-import onboard.presentation.dto.DownloadFileRes;
-import onboard.presentation.dto.OnboardTransactionDto;
+import onboard.presentation.dto.*;
 import onboard.presentation.exception.ErrorCode;
 import onboard.presentation.exception.OnboardingException;
 import onboard.presentation.model.*;
@@ -44,14 +42,16 @@ public class OnboardServiceImpl implements OnboardService {
     private final TransactionService transactionService;
     private final EkycService ekycService;
     private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final CommonClient commonClient;
 
     @Autowired
-    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService) {
+    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService, CommonClient commonClient) {
         this.defaultKaptcha = defaultKaptcha;
         this.redisTemplate = redisTemplate;
         this.fileClient = fileClient;
         this.transactionService = transactionService;
         this.ekycService = ekycService;
+        this.commonClient = commonClient;
     }
 
     @Override
@@ -112,8 +112,8 @@ public class OnboardServiceImpl implements OnboardService {
             logger.info("OnboardServiceImpl compareFace with request: {}", request);
             // validate id transaction
             if(Objects.isNull(request)
-                    || StringUtils.isNotBlank(request.getIdImageFace())
-                    || StringUtils.isNotBlank(request.getIdImageFont())){
+                    || StringUtils.isBlank(request.getIdImageFace())
+                    || StringUtils.isBlank(request.getIdImageFont())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction
@@ -161,7 +161,7 @@ public class OnboardServiceImpl implements OnboardService {
     public ResponseEntity<SendOtpToCustomerRes> sendOtpToCustomer(SendOtpToCustomerReq request) {
         try {
             logger.info("OnboardServiceImpl sendOtpToCustomer with request: {}", new Gson().toJson(request));
-            if(Objects.isNull(request) || StringUtils.isNotBlank(request.getTransId())){
+            if(Objects.isNull(request) || StringUtils.isBlank(request.getTransId())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction
@@ -171,10 +171,17 @@ public class OnboardServiceImpl implements OnboardService {
             }
 
             // lấy ra số điện thoại và call common để gửi OTP
+            OtpSendRequest otpSendRequest = new OtpSendRequest();
+            otpSendRequest.setEmail(onboardTransaction.getEmail());
+            otpSendRequest.setPhoneNumber(onboardTransaction.getPhoneNumber());
+            OtpSendResponse otpSendResponse = commonClient.sendOtpToCustomer(otpSendRequest);
+            logger.info("OnboardServiceImpl sendOtpToCustomer otpSendResponse: {}", toJson(otpSendResponse));
 
+            SendOtpToCustomerRes res = new SendOtpToCustomerRes();
+            res.setTransId(onboardTransaction.getId());
+            res.setOtpTransactionId(otpSendResponse.getOtpTransactionId());
 
-
-            return null;
+            return ResponseEntity.ok(res);
         } catch (Exception e){
             logger.error("OnboardServiceImpl sendOtpToCustomer with error detail: {}", e);
             throw e;
@@ -186,9 +193,9 @@ public class OnboardServiceImpl implements OnboardService {
         try {
             logger.info("OnboardServiceImpl confirmOtp with request: {}", new Gson().toJson(request));
             if(Objects.isNull(request)
-                    || StringUtils.isNotBlank(request.getTransId())
-                    || StringUtils.isNotBlank(request.getOtpCode())
-                    || StringUtils.isNotBlank(request.getOtpTransactionId())){
+                    || StringUtils.isBlank(request.getTransId())
+                    || StringUtils.isBlank(request.getOtpCode())
+                    || StringUtils.isBlank(request.getOtpTransactionId())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction
@@ -213,8 +220,8 @@ public class OnboardServiceImpl implements OnboardService {
         try {
             logger.info("OnboardServiceImpl confirmInfo with request: {}", new Gson().toJson(request));
             if(Objects.isNull(request)
-                    || StringUtils.isNotBlank(request.getTransId())
-                    || StringUtils.isNotBlank(request.getIcNumber())){
+                    || StringUtils.isBlank(request.getTransId())
+                    || StringUtils.isBlank(request.getIcNumber())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction
@@ -239,8 +246,8 @@ public class OnboardServiceImpl implements OnboardService {
         try {
             logger.info("OnboardServiceImpl registerCustomer with request: {}", new Gson().toJson(request));
             if(Objects.isNull(request)
-                    || StringUtils.isNotBlank(request.getUserName())
-                    || StringUtils.isNotBlank(request.getPassword())){
+                    || StringUtils.isBlank(request.getUserName())
+                    || StringUtils.isBlank(request.getPassword())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction
@@ -264,8 +271,8 @@ public class OnboardServiceImpl implements OnboardService {
         try {
             logger.info("OnboardServiceImpl ocrCard with request: {}", new Gson().toJson(request));
             if(Objects.isNull(request)
-                    || StringUtils.isNotBlank(request.getIcBack())
-                    || StringUtils.isNotBlank(request.getIcFont())){
+                    || StringUtils.isBlank(request.getIcBack())
+                    || StringUtils.isBlank(request.getIcFont())){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             OnboardTransactionDto onboardTransaction

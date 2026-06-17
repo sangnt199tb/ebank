@@ -5,6 +5,9 @@ import onboard.persistence.repository.OnboardingTransactionRepo;
 import onboard.persistence.service.TransactionService;
 import onboard.presentation.dto.OnboardTransactionDto;
 import onboard.presentation.model.CheckPhoneEmailReq;
+import onboard.presentation.service.OnboardService;
+import onboard.presentation.util.OnboardStatus;
+import onboard.presentation.util.OnboardStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,8 @@ public class TransactionServiceImpl implements TransactionService {
         entity.setEmail(req.getEmail());
         entity.setPhoneNumber(req.getPhoneNumber());
         entity.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        entity.setStatus(OnboardStatus.SUCCESS.name());
+        entity.setStep(OnboardStep.INIT.name());
         entity = onboardingTransactionRepo.save(entity);
         OnboardTransactionDto dto = new OnboardTransactionDto();
         dto.setId(entity.getId());

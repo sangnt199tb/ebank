@@ -32,7 +32,7 @@ api:
     gateway-secret: Ebank@SecretKey2026
     public-endpoints: >
       /v1/onboard/captcha,
-      /v1/onboard/check-phone-email,
+      /v1/onboard/**,
       /v1/onboard/compare-face,
       /v1/fwd/**
 
