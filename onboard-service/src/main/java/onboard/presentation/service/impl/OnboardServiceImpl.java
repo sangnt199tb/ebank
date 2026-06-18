@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.nimbusds.jose.shaded.gson.Gson;
+import customer.presentation.dto.CustomerDto;
+import customer.presentation.dto.RequestUserDto;
 import onboard.integration.model.CompareFaceInterReq;
 import onboard.integration.model.CompareFaceInterRes;
 import onboard.integration.service.EkycService;
 import onboard.persistence.service.TransactionService;
 import onboard.presentation.client.CommonClient;
+import onboard.presentation.client.CustomerClient;
 import onboard.presentation.client.FileClient;
 import onboard.presentation.dto.*;
 import onboard.presentation.exception.ErrorCode;
@@ -43,15 +46,17 @@ public class OnboardServiceImpl implements OnboardService {
     private final EkycService ekycService;
     private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final CommonClient commonClient;
+    private final CustomerClient customerClient;
 
     @Autowired
-    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService, CommonClient commonClient) {
+    public OnboardServiceImpl(DefaultKaptcha defaultKaptcha, StringRedisTemplate redisTemplate, FileClient fileClient, TransactionService transactionService, EkycService ekycService, CommonClient commonClient, CustomerClient customerClient) {
         this.defaultKaptcha = defaultKaptcha;
         this.redisTemplate = redisTemplate;
         this.fileClient = fileClient;
         this.transactionService = transactionService;
         this.ekycService = ekycService;
         this.commonClient = commonClient;
+        this.customerClient = customerClient;
     }
 
     @Override
@@ -234,9 +239,16 @@ public class OnboardServiceImpl implements OnboardService {
             if(Objects.isNull(onboardTransaction)){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
+            logger.info("OnboardServiceImpl confirmInfo onboardTransaction: {}", toJson(onboardTransaction));
+
+            // check 15 tuoi
 
 
-
+            // check ton tai ic ben customer
+            RequestUserDto requestUserDto = new RequestUserDto();
+            requestUserDto.setIcNumber(onboardTransaction.getIcNumber());
+            CustomerDto customerDto = customerClient.getCustomerByIcNumber(requestUserDto);
+            logger.info("OnboardServiceImpl confirmInfo customerDto: {}", toJson(customerDto));
 
 
             return null;
@@ -286,10 +298,24 @@ public class OnboardServiceImpl implements OnboardService {
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
 
+            ReadIcCardReq readIcCardReq = new ReadIcCardReq();
+            readIcCardReq.setPhoneNumber(onboardTransaction.getPhoneNumber());
+            readIcCardReq.setIcBack(request.getIcBack());
+            readIcCardReq.setIcFont(request.getIcFont());
+            ReadIcCardRes res = fileClient.callFileOcr(readIcCardReq);
+            logger.info("OnboardServiceImpl ocrCard res: {}", toJson(res));
 
+            //update data base
+            OnboardTransactionDto onboardTransactionDto = new OnboardTransactionDto();
+            onboardTransactionDto.setIcNumber(res.getId());
+            onboardTransactionDto.setFullName(res.getName());
+            onboardTransactionDto.setDob(res.getDob());
+            onboardTransactionDto.setId(onboardTransaction.getId());
+            transactionService.updateTransactionId(onboardTransactionDto);
 
-
-            return null;
+            OcrCardRes ocrCardRes = new OcrCardRes();
+            ocrCardRes.setTransId(onboardTransaction.getId());
+            return ResponseEntity.ok(ocrCardRes);
         } catch (Exception e){
             logger.error("OnboardServiceImpl ocrCard with error detail: {}", e);
             throw e;

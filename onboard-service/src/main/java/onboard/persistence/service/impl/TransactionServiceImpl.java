@@ -8,6 +8,7 @@ import onboard.presentation.model.CheckPhoneEmailReq;
 import onboard.presentation.service.OnboardService;
 import onboard.presentation.util.OnboardStatus;
 import onboard.presentation.util.OnboardStep;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,42 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public String updateTransactionId(OnboardTransactionDto onboardTransactionDto) {
-        return null;
+        OnboardingTransactionEntity entity
+                = onboardingTransactionRepo.findFirstByIdOrderByCreatedDateDesc(onboardTransactionDto.getId());
+        OnboardingTransactionEntity onboardingTransactionEntity = mapToOnboardEntity(onboardTransactionDto, entity);
+        onboardingTransactionRepo.save(onboardingTransactionEntity);
+        return entity.getId();
+    }
+
+    private OnboardingTransactionEntity mapToOnboardEntity(OnboardTransactionDto onboardTransactionDto, OnboardingTransactionEntity entity){
+        if(StringUtils.isNotBlank(onboardTransactionDto.getPhoneNumber())){
+            entity.setPhoneNumber(onboardTransactionDto.getPhoneNumber());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getIcNumber())){
+            entity.setIcNumber(onboardTransactionDto.getIcNumber());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getFullName())){
+            entity.setFullName(onboardTransactionDto.getFullName());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getAddress())){
+            entity.setAddress(onboardTransactionDto.getAddress());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getEmail())){
+            entity.setEmail(onboardTransactionDto.getEmail());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getDob())){
+            entity.setDob(onboardTransactionDto.getDob());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getDateOfIssue())){
+            entity.setDateOfIssue(onboardTransactionDto.getDateOfIssue());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getExpirationDate())){
+            entity.setExpirationDate(onboardTransactionDto.getExpirationDate());
+        }
+        if(StringUtils.isNotBlank(onboardTransactionDto.getPlaceOfIssue())){
+            entity.setPlaceOfIssue(onboardTransactionDto.getPlaceOfIssue());
+        }
+        return entity;
     }
 
     private OnboardTransactionDto mapOnboardTransaction(OnboardingTransactionEntity entity){

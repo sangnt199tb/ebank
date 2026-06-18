@@ -1,5 +1,6 @@
 package file.integration.service.impl;
 
+import file.configuration.FileAppConfiguration;
 import file.integration.dto.FptOcrResponse;
 import file.integration.dto.ReadIcCardReq;
 import file.integration.dto.ReadIcCardRes;
@@ -25,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.InputStream;
 
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -35,12 +35,14 @@ public class FileEkycServiceImpl implements FileEkycService {
     private final RestTemplate restTemplate;
     private final MinioService minioService;
     private final ManageFileRepo manageFileRepo;
+    private final FileAppConfiguration fileAppConfiguration;
 
     @Autowired
-    public FileEkycServiceImpl(RestTemplate restTemplate, MinioService minioService, ManageFileRepo manageFileRepo) {
+    public FileEkycServiceImpl(RestTemplate restTemplate, MinioService minioService, ManageFileRepo manageFileRepo, FileAppConfiguration fileAppConfiguration) {
         this.restTemplate = restTemplate;
         this.minioService = minioService;
         this.manageFileRepo = manageFileRepo;
+        this.fileAppConfiguration = fileAppConfiguration;
     }
 
     @Override
@@ -60,8 +62,8 @@ public class FileEkycServiceImpl implements FileEkycService {
                 throw new FileException(ErrorCode.FILE_NOT_FOUND);
             }
 
-            String apiUrl = "https://api.fpt.ai/vision/idr/vnm";
-            String apiKey = "HoqBnvHQ4MSDaqfvvAmaahJdZGGJqkpL"; // Nên đưa vào file cấu hình
+            String apiUrl = fileAppConfiguration.getOcrUrl();
+            String apiKey = fileAppConfiguration.getApiKey();
 
             try {
                 InputStream inputStream = minioService.downloadFile(manageFileEntity.getFilePath());
@@ -88,6 +90,8 @@ public class FileEkycServiceImpl implements FileEkycService {
                 logger.info("FileEkycServiceImpl readIcCard response: {}", response.getBody());
                 ReadIcCardRes readIcCardRes = new ReadIcCardRes();
                 readIcCardRes.setId(response.getBody().getData().get(0).getId());
+                readIcCardRes.setName(response.getBody().getData().get(0).getName());
+                readIcCardRes.setDob(response.getBody().getData().get(0).getDob());
                 return readIcCardRes;
             } catch (Exception e) {
                 logger.error("FileEkycServiceImpl readIcCard call fpt with error detail: {}", e);

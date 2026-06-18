@@ -26,8 +26,7 @@ jwt:
 api:
   internal:
     gateway-secret: Ebank@SecretKey2026
-    public-endpoints: >
-      /v1/file/upload
+    public-endpoints: /v1/file/upload, /file/internal/**
 
 eureka:
   client:
@@ -40,3 +39,8 @@ logging:
   level:
     org.springframework.security: TRACE
     org.springframework.web: DEBUG
+tpb:
+  hydro:
+    file:
+      ocrUrl: https://api.fpt.ai/vision/idr/vnm
+      apiKey: HoqBnvHQ4MSDaqfvvAmaahJdZGGJqkpL
