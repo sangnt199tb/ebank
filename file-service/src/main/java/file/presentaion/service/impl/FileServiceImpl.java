@@ -56,6 +56,13 @@ public class FileServiceImpl implements FileService {
             // validate file type
             Validate.validateFileType(file.getOriginalFilename());
 
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String newFileName = UUID.randomUUID().toString() + fileExtension;
+
             // save minio
             String filePath = minioService.uploadFile(file, module);
 
@@ -64,7 +71,7 @@ public class FileServiceImpl implements FileService {
             manageFileEntity.setId(UUID.randomUUID().toString());
             manageFileEntity.setCreatedBy(phoneNumber);
             manageFileEntity.setCreateDate(new Timestamp(System.currentTimeMillis()));
-            manageFileEntity.setFileName(file.getOriginalFilename());
+            manageFileEntity.setFileName(newFileName);
             manageFileEntity.setFilePath(filePath);
             manageFileEntity.setFileStatus("CREATE");
             manageFileEntity.setFileType(fileType);

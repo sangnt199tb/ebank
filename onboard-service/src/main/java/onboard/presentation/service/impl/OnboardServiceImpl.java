@@ -203,12 +203,17 @@ public class OnboardServiceImpl implements OnboardService {
             if(Objects.isNull(onboardTransaction)){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
-
-
-
-
-
-            return null;
+            ValidateOtpReq validateOtpReq = new ValidateOtpReq();
+            validateOtpReq.setOtpCode(request.getOtpCode());
+            validateOtpReq.setOtpTransactionId(request.getOtpTransactionId());
+            ValidateOtpRes validateOtpRes = commonClient.callCommonValidateOtp(validateOtpReq);
+            logger.info("OnboardServiceImpl confirmOtp validateOtpRes: {}", toJson(validateOtpRes));
+            if(!validateOtpRes.isStatusValidateOtp()){
+                throw new OnboardingException(ErrorCode.OTP_FAIL);
+            }
+            ConfirmOtpRes res = new ConfirmOtpRes();
+            res.setTransId(request.getTransId());
+            return ResponseEntity.ok(res);
         } catch (Exception e){
             logger.error("OnboardServiceImpl confirmOtp with error detail: {}", e);
             throw e;

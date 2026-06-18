@@ -2,10 +2,13 @@ package common.integration.service.impl;
 
 import common.integration.dto.OtpSendRequest;
 import common.integration.dto.OtpSendResponse;
+import common.integration.dto.ValidateOtpReq;
+import common.integration.dto.ValidateOtpRes;
 import common.integration.service.OtpService;
 import common.persitence.domain.OtpHistory;
 import common.persitence.repository.OtpHistoryRepository;
 import common.presentation.util.OtpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -38,11 +43,13 @@ public class OtpServiceImpl implements OtpService {
     public OtpSendResponse processAndSendOtp(OtpSendRequest request) {
         String transactionId = UUID.randomUUID().toString();
         String otpCode = String.format("%06d", new Random().nextInt(999999));
-
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(5);
         OtpHistory history = OtpHistory.builder()
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .otpTransactionId(transactionId)
+                .otpCode(otpCode)
+                .expiresAt(expiresAt)
                 .status(OtpStatus.PENDING)
                 .build();
         otpHistoryRepository.save(history);
@@ -61,6 +68,29 @@ public class OtpServiceImpl implements OtpService {
         otpSendResponse.setStatus(history.getStatus().name());
         otpSendResponse.setMessage("OTP processing completed");
         return otpSendResponse;
+    }
+
+    @Override
+    public ValidateOtpRes validateOtp(ValidateOtpReq request) {
+        logger.info("OtpServiceImpl validateOtp with otp transId: {}", request.getOtpTransactionId());
+        ValidateOtpRes res = new ValidateOtpRes();
+        res.setStatusValidateOtp(false);
+        try {
+            OtpHistory otpHistory = otpHistoryRepository.findFirstByOtpTransactionId(request.getOtpTransactionId());
+            if(Objects.isNull(otpHistory)){
+                res.setStatusValidateOtp(false);
+                return res;
+            }
+
+            if(StringUtils.equalsIgnoreCase(request.getOtpCode(), otpHistory.getOtpCode())){
+                res.setStatusValidateOtp(true);
+                return res;
+            }
+            return res;
+        } catch (Exception e){
+            logger.error("OtpServiceImpl validateOtp with error detail: {}", e);
+            throw e;
+        }
     }
 
     private void sendEmail(String to, String otpCode) {

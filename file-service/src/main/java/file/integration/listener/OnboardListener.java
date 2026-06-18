@@ -2,10 +2,12 @@ package file.integration.listener;
 
 import file.integration.dto.FileOnboardReq;
 import file.integration.dto.FileOnboardRes;
+import file.integration.dto.ReadIcCardReq;
+import file.integration.dto.ReadIcCardRes;
+import file.integration.service.FileEkycService;
 import file.persistence.domain.ManageFileEntity;
 import file.persistence.repository.ManageFileRepo;
 import file.presentaion.exception.ErrorCode;
-import file.presentaion.exception.ErrorMessageLoader;
 import file.presentaion.exception.ErrorObject;
 import file.presentaion.exception.FileException;
 import file.presentaion.service.MinioService;
@@ -30,11 +32,13 @@ public class OnboardListener {
 
     private final MinioService minioService;
     private final ManageFileRepo manageFileRepo;
+    private final FileEkycService fileEkycService;
 
     @Autowired
-    public OnboardListener(MinioService minioService, ManageFileRepo manageFileRepo) {
+    public OnboardListener(MinioService minioService, ManageFileRepo manageFileRepo, FileEkycService fileEkycService) {
         this.minioService = minioService;
         this.manageFileRepo = manageFileRepo;
+        this.fileEkycService = fileEkycService;
     }
 
     @PostMapping("/download-file-onboard")
@@ -91,5 +95,10 @@ public class OnboardListener {
             fileOnboardRes.setStatus(ErrorCode.INTERNAL_SERVER_ERROR);
             return fileOnboardRes;
         }
+    }
+
+    @PostMapping("/ocr-ic-card")
+    public ReadIcCardRes readIcCard(@RequestBody ReadIcCardReq readIcCardReq){
+        return fileEkycService.readIcCard(readIcCardReq);
     }
 }

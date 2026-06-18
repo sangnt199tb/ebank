@@ -37,6 +37,7 @@ jwt:
 api:
   internal:
     gateway-secret: Ebank@SecretKey2026
+    public-endpoints: /internal/api/v1/otp/**,/internal/**
 
 eureka:
   client:

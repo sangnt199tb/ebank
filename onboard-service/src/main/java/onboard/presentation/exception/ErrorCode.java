@@ -10,4 +10,5 @@ public interface ErrorCode {
     String CAPTCHA_TIMEOUT = "HYD-35-007";
     String CAPTCHA_FAILED = "HYD-35-008";
     String INVALID_REQUEST = "HYD-35-009";
+    String OTP_FAIL = "HYD-35-010";
 }

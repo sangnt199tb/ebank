@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OtpHistoryRepository extends JpaRepository<OtpHistory, Long> {
+    OtpHistory findFirstByOtpTransactionId(String transId);
 }
