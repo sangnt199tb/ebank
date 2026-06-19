@@ -31,6 +31,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
@@ -249,9 +251,12 @@ public class OnboardServiceImpl implements OnboardService {
             requestUserDto.setIcNumber(onboardTransaction.getIcNumber());
             CustomerDto customerDto = customerClient.getCustomerByIcNumber(requestUserDto);
             logger.info("OnboardServiceImpl confirmInfo customerDto: {}", toJson(customerDto));
-
-
-            return null;
+            if(Objects.nonNull(customerDto) && StringUtils.isNotBlank(customerDto.getCifNumber())){
+                throw new OnboardingException(ErrorCode.CUSTOMER_EXITS);
+            }
+            ConfirmInfoRes confirmInfoRes = new ConfirmInfoRes();
+            confirmInfoRes.setTransId(request.getTransId());
+            return ResponseEntity.ok(confirmInfoRes);
         } catch (Exception e){
             logger.error("OnboardServiceImpl confirmInfo with error detail: {}", e);
             throw e;
@@ -272,11 +277,21 @@ public class OnboardServiceImpl implements OnboardService {
             if(Objects.isNull(onboardTransaction)){
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
+            logger.info("OnboardServiceImpl registerCustomer onboardTransaction: {}", toJson(onboardTransaction));
 
+            // call customer create cif
+            CustomerDto customerDto = new CustomerDto();
+            customerDto.setFullName(onboardTransaction.getFullName());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dob = LocalDate.parse(onboardTransaction.getDob(), formatter);
+            customerDto.setDateOfBirth(dob);
+            customerDto.setPassword(request.getPassword());
+            String cifNumber = customerClient.createCustomer(customerDto);
+            logger.info("OnboardServiceImpl registerCustomer success with cif: {}", cifNumber);
+            RegisterCustomerRes res = new RegisterCustomerRes();
+            res.setCifNumber(cifNumber);
 
-
-
-            return null;
+            return ResponseEntity.ok(res);
         } catch (Exception e){
             logger.error("OnboardServiceImpl registerCustomer with error detail: {}", e);
             throw e;

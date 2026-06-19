@@ -38,4 +38,5 @@ public class CustomerDto {
     private String riskStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String password;
 }

@@ -21,4 +21,7 @@ public interface CustomerClient {
     @PostMapping("/customer-service/customer/internal/customers/users/get-by-icNumber")
     CustomerDto getCustomerByIcNumber(@RequestBody RequestUserDto requestUserDto);
 
+    @PostMapping("/customer-service/customer/internal/customers/users/create-customer")
+    String createCustomer(@RequestBody CustomerDto requestUserDto);
+
 }

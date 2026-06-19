@@ -21,28 +21,28 @@ public class CustomerEntity {
     @Column(name = "CUSTOMER_ID", length = 36)
     private String customerId;
 
-    @Column(name = "CIF_NUMBER", length = 20, nullable = false, unique = true)
+    @Column(name = "CIF_NUMBER")
     private String cifNumber;
 
-    @Column(name = "FULL_NAME", length = 100, nullable = false)
+    @Column(name = "FULL_NAME")
     private String fullName;
 
     @Column(name = "DATE_OF_BIRTH")
     private LocalDate dateOfBirth;
 
-    @Column(name = "GENDER", length = 10)
+    @Column(name = "GENDER")
     private String gender;
 
-    @Column(name = "ID_NUMBER", length = 20)
+    @Column(name = "ID_NUMBER")
     private String idNumber;
 
-    @Column(name = "IC_TYPE", length = 20)
+    @Column(name = "IC_TYPE")
     private String icType;
 
-    @Column(name = "OLD_IC_NUMBER", length = 12)
+    @Column(name = "OLD_IC_NUMBER")
     private String oldIcNumber;
 
-    @Column(name = "OLD_IC_TYPE", length = 10)
+    @Column(name = "OLD_IC_TYPE")
     private String oldIcType;
 
     @Column(name = "ID_ISSUE_DATE")
@@ -51,31 +51,31 @@ public class CustomerEntity {
     @Column(name = "ID_EXPIRY_DATE")
     private LocalDate idExpiryDate;
 
-    @Column(name = "ID_ISSUE_PLACE", length = 100)
+    @Column(name = "ID_ISSUE_PLACE")
     private String idIssuePlace;
 
-    @Column(name = "PERMANENT_ADDRESS", length = 255)
+    @Column(name = "PERMANENT_ADDRESS")
     private String permanentAddress;
 
-    @Column(name = "CURRENT_ADDRESS", length = 255)
+    @Column(name = "CURRENT_ADDRESS")
     private String currentAddress;
 
-    @Column(name = "PHONE_NUMBER", length = 20)
+    @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
-    @Column(name = "EMAIL_NHOM07", length = 100)
+    @Column(name = "EMAIL_NHOM07")
     private String email;
 
-    @Column(name = "NATIONALITY", length = 50)
+    @Column(name = "NATIONALITY")
     private String nationality;
 
-    @Column(name = "BRANCH_CODE", length = 20, nullable = false)
+    @Column(name = "BRANCH_CODE")
     private String branchCode;
 
-    @Column(name = "SALE_CODE", length = 20)
+    @Column(name = "SALE_CODE")
     private String saleCode;
 
-    @Column(name = "REFERRAL_CODE", length = 50)
+    @Column(name = "REFERRAL_CODE")
     private String referralCode;
 
     @Column(name = "AUTHENTICATION_METHOD", length = 100)
@@ -107,4 +107,7 @@ public class CustomerEntity {
 
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    @Column(name = "PASSWORD")
+    private String password;
 }

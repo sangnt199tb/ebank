@@ -10,21 +10,26 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
 import java.util.Objects;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/customer/internal")
 public class CustomerOnboardListener {
     private final CustomerRepository customerRepository;
     private static Logger logger = LoggerFactory.getLogger(CustomerOnboardListener.class);
+    private final BCryptPasswordEncoder passwordEncoder;
 
     ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public CustomerOnboardListener(CustomerRepository customerRepository) {
+    public CustomerOnboardListener(CustomerRepository customerRepository, BCryptPasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/onboard-call-customer")
@@ -46,10 +51,18 @@ public class CustomerOnboardListener {
 
     @GetMapping("/customers/users/{username}")
     public UserDTO getUserByUsername(@PathVariable("username") String username){
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername("sanglangthang");
-        userDTO.setPassword("$2a$10$AYjj41H0H0R1Vh/7gBp19u2xPOiLp.I4v8ql2Bi4kMuYF1mgMwOxe");        userDTO.setRole("KH");
-        return userDTO;
+        try {
+            logger.info("CustomerOnboardListener getUserByUsername username: {}", username);
+            UserDTO userDTO = new UserDTO();
+            CustomerEntity customerEntity = customerRepository.findByCustomerId(username);
+            userDTO.setUsername(customerEntity.getCustomerId());
+            userDTO.setPassword(customerEntity.getPassword());
+            userDTO.setRole("KH");
+            return userDTO;
+        } catch (Exception e){
+            logger.error("CustomerOnboardListener getUserByUsername with error detail: {}", e);
+            throw e;
+        }
     }
 
     @PostMapping("/customers/users/get-by-icNumber")
@@ -62,5 +75,27 @@ public class CustomerOnboardListener {
             customerDto.setCifNumber(customerEntity.getCifNumber());
         }
         return customerDto;
+    }
+
+    @PostMapping("/customers/users/create-customer")
+    public String createCustomer(@RequestBody CustomerDto customerDto){
+        logger.error("CustomerOnboardListener getUserByIcNumber customerDto: {}", customerDto);
+        try {
+            SecureRandom secureRandom = new SecureRandom();
+            int number = secureRandom.nextInt(100000000);
+            String cifNumber = String.format("%08d", number);
+            CustomerEntity customerEntity = new CustomerEntity();
+            customerEntity.setCustomerId(cifNumber);
+            customerEntity.setCifNumber(cifNumber);
+            customerEntity.setFullName(customerDto.getFullName());
+            customerEntity.setDateOfBirth(customerDto.getDateOfBirth());
+            customerEntity.setBranchCode("888");
+            customerEntity.setPassword(passwordEncoder.encode(customerDto.getPassword()));
+            customerRepository.save(customerEntity);
+            return cifNumber;
+        } catch (Exception e){
+            logger.error("CustomerOnboardListener createCustomer with error detail: {}", e);
+            throw e;
+        }
     }
 }
