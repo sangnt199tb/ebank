@@ -25,7 +25,4 @@ public interface CustomerClient {
 
     @PostMapping("/customer-service/customer/internal/customers/users/create-customer")
     String createCustomer(@RequestBody CustomerDto requestUserDto);
-
-    @PostMapping("/customer-service/customer/internal/customers/users/sent-email-customer")
-    SentEmailCustomerRes sentEmailSuccessToCustomer(@RequestBody SentEmailCustomerReq sentEmailCustomerReq);
 }

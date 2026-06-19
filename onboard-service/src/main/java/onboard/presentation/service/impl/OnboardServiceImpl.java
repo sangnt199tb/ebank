@@ -293,10 +293,12 @@ public class OnboardServiceImpl implements OnboardService {
             sentEmailCustomerReq.setEmail(onboardTransaction.getEmail());
             sentEmailCustomerReq.setFullName(onboardTransaction.getFullName());
             sentEmailCustomerReq.setPhoneNumber(onboardTransaction.getPhoneNumber());
-            customerClient.sentEmailSuccessToCustomer(sentEmailCustomerReq);
+            commonClient.sentEmailSuccessToCustomer(sentEmailCustomerReq);
 
             RegisterCustomerRes res = new RegisterCustomerRes();
             res.setCifNumber(cifNumber);
+            res.setTransId(request.getTransId());
+            res.setUserName(request.getUserName());
             return ResponseEntity.ok(res);
         } catch (Exception e){
             logger.error("OnboardServiceImpl registerCustomer with error detail: {}", e);
@@ -336,6 +338,9 @@ public class OnboardServiceImpl implements OnboardService {
 
             OcrCardRes ocrCardRes = new OcrCardRes();
             ocrCardRes.setTransId(onboardTransaction.getId());
+            ocrCardRes.setFullName(res.getName());
+            ocrCardRes.setDob(res.getDob());
+            ocrCardRes.setIcNumber(res.getId());
             return ResponseEntity.ok(ocrCardRes);
         } catch (Exception e){
             logger.error("OnboardServiceImpl ocrCard with error detail: {}", e);
