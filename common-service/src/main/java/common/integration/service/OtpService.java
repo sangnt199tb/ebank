@@ -1,12 +1,11 @@
 package common.integration.service;
 
-import common.integration.dto.OtpSendRequest;
-import common.integration.dto.OtpSendResponse;
-import common.integration.dto.ValidateOtpReq;
-import common.integration.dto.ValidateOtpRes;
+import common.integration.dto.*;
 
 public interface OtpService {
     OtpSendResponse processAndSendOtp(OtpSendRequest request);
 
     ValidateOtpRes validateOtp(ValidateOtpReq request);
+
+    SentEmailCustomerRes sentEmailToCustomer(SentEmailCustomerReq request);
 }

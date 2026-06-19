@@ -1,9 +1,6 @@
 package common.integration.service.impl;
 
-import common.integration.dto.OtpSendRequest;
-import common.integration.dto.OtpSendResponse;
-import common.integration.dto.ValidateOtpReq;
-import common.integration.dto.ValidateOtpRes;
+import common.integration.dto.*;
 import common.integration.service.OtpService;
 import common.persitence.domain.OtpHistory;
 import common.persitence.repository.OtpHistoryRepository;
@@ -91,6 +88,18 @@ public class OtpServiceImpl implements OtpService {
             logger.error("OtpServiceImpl validateOtp with error detail: {}", e);
             throw e;
         }
+    }
+
+    @Override
+    public SentEmailCustomerRes sentEmailToCustomer(SentEmailCustomerReq request) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(request.getEmail());
+        message.setSubject("CHÚC MỪNG ĐĂNG KÝ TÀI KHOẢN THÀNH CÔNG");
+        message.setText("Chúc mừng " + request.getFullName() + " đã đăng ký thành công tài khoản Ngân hàng TPBank. Vui lòng đăng nhập App TPBank Mobile để sử dụng dịch vụ!");
+        mailSender.send(message);
+        SentEmailCustomerRes res = new SentEmailCustomerRes();
+        res.setStatus("SUCCESS");
+        return res;
     }
 
     private void sendEmail(String to, String otpCode) {

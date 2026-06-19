@@ -287,9 +287,16 @@ public class OnboardServiceImpl implements OnboardService {
             customerDto.setPassword(request.getPassword());
             String cifNumber = customerClient.createCustomer(customerDto);
             logger.info("OnboardServiceImpl registerCustomer success with cif: {}", cifNumber);
+
+            //sent email onboard to customer
+            SentEmailCustomerReq sentEmailCustomerReq = new SentEmailCustomerReq();
+            sentEmailCustomerReq.setEmail(onboardTransaction.getEmail());
+            sentEmailCustomerReq.setFullName(onboardTransaction.getFullName());
+            sentEmailCustomerReq.setPhoneNumber(onboardTransaction.getPhoneNumber());
+            customerClient.sentEmailSuccessToCustomer(sentEmailCustomerReq);
+
             RegisterCustomerRes res = new RegisterCustomerRes();
             res.setCifNumber(cifNumber);
-
             return ResponseEntity.ok(res);
         } catch (Exception e){
             logger.error("OnboardServiceImpl registerCustomer with error detail: {}", e);

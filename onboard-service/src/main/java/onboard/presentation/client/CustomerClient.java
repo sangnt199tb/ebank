@@ -4,6 +4,8 @@ import customer.presentation.dto.CustomerDto;
 import customer.presentation.dto.RequestUserDto;
 import customer.presentation.model.CustomerModel;
 import onboard.config.FeignClientConfig;
+import onboard.presentation.dto.SentEmailCustomerReq;
+import onboard.presentation.dto.SentEmailCustomerRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,4 +26,6 @@ public interface CustomerClient {
     @PostMapping("/customer-service/customer/internal/customers/users/create-customer")
     String createCustomer(@RequestBody CustomerDto requestUserDto);
 
+    @PostMapping("/customer-service/customer/internal/customers/users/sent-email-customer")
+    SentEmailCustomerRes sentEmailSuccessToCustomer(@RequestBody SentEmailCustomerReq sentEmailCustomerReq);
 }

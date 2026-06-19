@@ -1,9 +1,6 @@
 package common.integration.listener;
 
-import common.integration.dto.OtpSendRequest;
-import common.integration.dto.OtpSendResponse;
-import common.integration.dto.ValidateOtpReq;
-import common.integration.dto.ValidateOtpRes;
+import common.integration.dto.*;
 import common.integration.service.OtpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +24,12 @@ public class InternalOtpListener {
     @PostMapping("/validate-otp")
     public ResponseEntity<ValidateOtpRes> validateOtp(@RequestBody ValidateOtpReq request) {
         ValidateOtpRes response = otpService.validateOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/sent-email-customer")
+    public ResponseEntity<SentEmailCustomerRes> sentEmailToCustomer(@RequestBody SentEmailCustomerReq request) {
+        SentEmailCustomerRes response = otpService.sentEmailToCustomer(request);
         return ResponseEntity.ok(response);
     }
 }
