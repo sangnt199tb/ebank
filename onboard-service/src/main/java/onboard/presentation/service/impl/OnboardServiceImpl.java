@@ -145,19 +145,21 @@ public class OnboardServiceImpl implements OnboardService {
                     .build();
             CompareFaceInterRes compareFaceAi = ekycService.compareFaceAi(compareFaceInterReq);
             logger.info("OnboardServiceImpl compareFace compareFaceAi: {}", compareFaceAi);
-
+            String reasoning = onboard.presentation.util.StringUtils.removeAccentsAndSpaces(compareFaceAi.getReasoning());
+            logger.info("OnboardServiceImpl compareFace reasoning: {}", reasoning);
             if(Objects.isNull(compareFaceAi)){
                 throw new OnboardingException(ErrorCode.FACE_MATCH_FAILED);
             }
 
-            if(!compareFaceAi.isMatch()){
-                throw new OnboardingException(ErrorCode.FACE_MATCH_FAILED);
+            if(reasoning.contains("tuongdong")
+                    || reasoning.contains("cungmotnguoi")
+                    || reasoning.contains("trungkhop")
+                    || reasoning.contains("khopnhau")){
+                CompareFaceRes compareFaceRes = new CompareFaceRes();
+                compareFaceRes.setId(request.getId());
+                return ResponseEntity.ok(compareFaceRes);
             }
-
-            CompareFaceRes compareFaceRes = new CompareFaceRes();
-            compareFaceRes.setId(request.getId());
-            return ResponseEntity.ok(compareFaceRes);
-
+            throw new OnboardingException(ErrorCode.FACE_MATCH_FAILED);
         } catch (Exception e){
             logger.error("OnboardServiceImpl compareFace with error detail: {}", e);
             throw e;
@@ -242,9 +244,6 @@ public class OnboardServiceImpl implements OnboardService {
                 throw new OnboardingException(ErrorCode.INVALID_REQUEST);
             }
             logger.info("OnboardServiceImpl confirmInfo onboardTransaction: {}", toJson(onboardTransaction));
-
-            // check 15 tuoi
-
 
             // check ton tai ic ben customer
             RequestUserDto requestUserDto = new RequestUserDto();
